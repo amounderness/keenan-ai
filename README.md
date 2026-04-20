@@ -1,4 +1,4 @@
-# keenanclough.ai
+# keenanclough.ai (WIP)
 
 **Human Ambition x Autonomous Systems**
 
