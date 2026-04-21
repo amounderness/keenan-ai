@@ -1,0 +1,58 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { SITE_TITLE } from '../consts';
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title={`404: Not Found | ${SITE_TITLE}`} description="Coordinate Not Found" />
+		<style>
+			.error-container {
+				text-align: center;
+				padding: 4em 1em;
+				background-color: var(--gray-light);
+				border-radius: 8px;
+				border-top: 4px solid var(--accent);
+				margin-top: 2em;
+			}
+			.error-code {
+				font-size: 5em;
+				color: rgb(var(--black));
+				margin: 0;
+				line-height: 1;
+			}
+			.error-message {
+				color: rgb(var(--gray-dark));
+				font-size: 1.2em;
+				margin-bottom: 2em;
+			}
+			.return-btn {
+				display: inline-block;
+				padding: 12px 24px;
+				background-color: var(--accent);
+				color: white;
+				text-decoration: none;
+				border-radius: 5px;
+				font-weight: bold;
+				transition: opacity 0.2s ease;
+			}
+			.return-btn:hover {
+				opacity: 0.9;
+			}
+		</style>
+	</head>
+	<body>
+		<Header />
+		<main>
+			<div class="error-container">
+				<h1 class="error-code">404</h1>
+				<p class="error-message">Coordinate Not Found. The system could not locate the requested page.</p>
+				<a href="/" class="return-btn">Return to Home</a>
+			</div>
+		</main>
+		<Footer />
+	</body>
+</html>
