@@ -1,40 +1,52 @@
 ---
-import Layout from '../layouts/BlogPost.astro';
+import BaseHead from '../components/BaseHead.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
 ---
 
-<Layout
-	title="Keenan Clough"
-	description="BSc AI & Data Science Student | Systems Thinker"
-	pubDate={new Date('April 20 2026')}
->
-	<h3>The Foundation: Human Ambition</h3>
-	<p>
-		My background is rooted in the humanities and public service. During my time in the Civil Service (Ministry of Defence) and my studies in Politics and Sociology, I learned how to navigate complex institutional structures and multi-level stakeholder relationships. From leadership in political campaigning to academic research in history and policy, I developed a deep understanding of the "why" behind how we organise our world.
-	</p>
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title={`About | ${SITE_TITLE}`} description="The intersection of public policy and data science." />
+	</head>
+	<body>
+		<Header />
+		<main>
+			<h1>The Architecture of Human Ambition</h1>
+			
+			<a href="/Keenan_Clough_CV.pdf" target="_blank" style="display: inline-block; padding: 10px 20px; background-color: var(--accent); color: white; text-decoration: none; border-radius: 5px; font-weight: bold; margin-bottom: 2em;">
+				Download Full CV (PDF)
+			</a>
 
-	<h3>The Architecture: Autonomous Systems</h3>
-	<p>
-		I am now translating that perspective into a technical toolkit. As a BSc AI & Data Science student at the University of Lancashire, I am building a foundation in Machine Learning, Systems Analysis, Database Design, and Frontier Tech.
-	</p>
+			<p>
+				I am driven by a singular focus: the intersection of human-centric governance and the technical architecture of the future. My goal is to design systems that allow for autonomy, resilience, and ethical operation in high-stakes environments.
+			</p>
 
-	<h3>The Bridge</h3>
-	<p>
-		I thrive in the space where research, ideation, and technical execution collide. I don’t just see code; I see the policy implications, the historical context, and the human impact. 
-	</p>
-	<hr />
-	<h3>The Toolkit</h3>
-	
-	<h4>Data & AI</h4>
-	<ul>
-		<li><strong>Languages:</strong> Python (Pandas, Matplotlib, Seaborn), C++ (STL), SQL Oracle</li>
-		<li><strong>Core Concepts:</strong> Machine Learning Foundations, Statistical Modelling, Systems Analysis, Database Design</li>
-		<li><strong>Visualisation:</strong> Power BI, Excel</li>
-	</ul>
+			<h3>The Foundation: Public Service & Policy</h3>
+			<p>
+				My background is rooted in institutional analysis and public service. During my tenure in the <strong>Civil Service (Ministry of Defence)</strong>, I navigated high-compliance environments and complex financial debt resolution. Combined with my academic foundation in Politics and historical research, I developed a deep understanding of multi-level stakeholder relationships and the "why" behind how we organise our world. 
+			</p>
 
-	<h4>Operations & Strategy</h4>
-	<ul>
-		<li><strong>Methodologies:</strong> Systems Thinking, Project Management, Political Analysis</li>
-		<li><strong>Digital Comms:</strong> CRM (Nationbuilder, Hubspot), Email Marketing, CMS (WordPress)</li>
-	</ul>
-</Layout>
-</Layout>
+			<h3>The Pivot: Autonomous Systems & Data</h3>
+			<p>
+				I am now translating that strategic perspective into a hard technical toolkit. As a BSc Artificial Intelligence & Data Science undergraduate at the University of Lancashire, I am applying mathematical foundations and machine learning principles to solve complex, systemic problems.
+			</p>
+			
+			<p>
+				I thrive in the space where research, ideation, and technical execution collide. I do not just see raw data; I see the policy implications, the historical context, and the human impact.
+			</p>
+
+			<hr />
+
+			<h3>Core Competencies</h3>
+			<ul>
+				<li><strong>Data & Programming:</strong> Python (Pandas, Matplotlib), SQL (Oracle), Git/GitHub.</li>
+				<li><strong>Systems & AI:</strong> Machine Learning Foundations, Systems Analysis, Database Design, Predictive Modelling.</li>
+				<li><strong>Analysis & Visualisation:</strong> Power BI, Advanced Excel, Quantitative & Qualitative Research.</li>
+				<li><strong>Operations:</strong> Stakeholder Management, Project Leadership, High-Compliance Governance.</li>
+			</ul>
+		</main>
+		<Footer />
+	</body>
+</html>
