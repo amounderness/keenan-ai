@@ -31,6 +31,8 @@ const { title, description, image = '/og-image.png' } = Astro.props;
 <title>{title}</title>
 <meta name="title" content={title} />
 <meta name="description" content={description} />
+<meta name="keywords" content="Keenan Clough, Systems Architecture, Data Science, AI, Public Policy, Machine Learning, Civic Tech, Predictive Modelling" />
+<meta name="author" content="Keenan Clough" />
 
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content="website" />
@@ -45,3 +47,30 @@ const { title, description, image = '/og-image.png' } = Astro.props;
 <meta property="twitter:title" content={title} />
 <meta property="twitter:description" content={description} />
 <meta property="twitter:image" content={new URL(image, Astro.url)} />
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": "Keenan Clough",
+  "jobTitle": "Artificial Intelligence & Data Science Undergraduate",
+  "url": "https://keenanclough.ai",
+  "sameAs": [
+    "https://www.linkedin.com/in/keenan-clough/",
+    "https://github.com/amounderness",
+    "https://x.com/Amounderness",
+    "https://keenanclough.substack.com"
+  ],
+  "alumniOf": [
+    {
+      "@type": "CollegeOrUniversity",
+      "name": "University of Lancashire"
+    },
+    {
+      "@type": "CollegeOrUniversity",
+      "name": "University of Liverpool"
+    }
+  ],
+  "knowsAbout": ["Artificial Intelligence", "Data Science", "Public Policy", "Systems Architecture", "Machine Learning", "Geospatial Mapping", "British Politics", "Electoral Analysis"]
+}
+</script>
