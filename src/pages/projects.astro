@@ -1,0 +1,32 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title={`Projects | ${SITE_TITLE}`} description={SITE_DESCRIPTION} />
+	</head>
+	<body>
+		<Header />
+		<main>
+			<h1>Projects & Portfolio</h1>
+			<p>A collection of technical repositories, data models, and live systems architectures.</p>
+			<hr />
+			
+			<h3>Frontier Systems</h3>
+			<p><strong>[Project Name / Space Tech Repo]</strong><br/>
+			<em>Python, C++, Systems Architecture</em><br/>
+			Exploring the data architecture required for orbital and lunar infrastructure.</p>
+
+			<h3>Civic Tech</h3>
+			<p><strong>[Project Name / Data Model]</strong><br/>
+			<em>SQL, Machine Learning</em><br/>
+			Building tools to improve public transparency and human-centred governance.</p>
+		</main>
+		<Footer />
+	</body>
+</html>
