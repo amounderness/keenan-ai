@@ -2,26 +2,127 @@
 import BaseHead from '../components/BaseHead.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
+import { SITE_TITLE } from '../consts';
+
+// We use a public RSS-to-JSON API to cleanly parse the Substack feed without needing heavy XML Node packages.
+const rssUrl = 'https://keenanclough.substack.com/feed';
+const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
+
+let articles = [];
+
+try {
+	const response = await fetch(apiUrl);
+	const data = await response.json();
+	if (data.status === 'ok') {
+		articles = data.items;
+	}
+} catch (error) {
+	console.error('Error fetching Substack feed:', error);
+}
 ---
 
 <!doctype html>
 <html lang="en">
 	<head>
-		<BaseHead title={`Articles | ${SITE_TITLE}`} description="Algorithms & Activism" />
+		<BaseHead title={`Articles | ${SITE_TITLE}`} description="Algorithms & Activism: Where data science meets grassroots politics." />
+		<style>
+			.subscribe-banner {
+				background-color: var(--gray-light);
+				padding: 1.5em;
+				border-radius: 8px;
+				margin-bottom: 2em;
+				border-left: 4px solid var(--accent);
+			}
+			.article-list {
+				list-style-type: none;
+				padding: 0;
+			}
+			.article-item {
+				margin-bottom: 2em;
+				padding-bottom: 1.5em;
+				border-bottom: 1px solid rgb(var(--gray-light));
+			}
+			.article-title {
+				font-size: 1.5em;
+				margin-bottom: 0.2em;
+			}
+			.article-title a {
+				color: rgb(var(--black));
+				text-decoration: none;
+			}
+			.article-title a:hover {
+				color: var(--accent);
+			}
+			.article-date {
+				color: rgb(var(--gray));
+				font-size: 0.9em;
+				margin-bottom: 0.8em;
+				display: block;
+			}
+			.article-excerpt {
+				color: rgb(var(--gray-dark));
+				line-height: 1.6;
+			}
+			.read-more {
+				display: inline-block;
+				margin-top: 0.5em;
+				font-weight: bold;
+				font-size: 0.9em;
+				color: var(--accent);
+				text-decoration: none;
+			}
+			.read-more:hover {
+				text-decoration: underline;
+			}
+		</style>
 	</head>
 	<body>
 		<Header />
 		<main>
 			<h1>Algorithms & Activism</h1>
-			<p>
-				Where data science meets grassroots politics. This is my public broadcast focusing on the intersection of modern technology and civic engagement.
-			</p>
-			<p>
-				<a href="https://keenanclough.substack.com" target="_blank" style="display: inline-block; padding: 10px 20px; background-color: var(--accent); color: white; text-decoration: none; border-radius: 5px; font-weight: bold; margin-top: 10px;">
-					Read the latest on Substack
+			
+			<div class="subscribe-banner">
+				<p style="margin-top: 0;">
+					<strong>The Public Broadcast:</strong> Where data science meets grassroots politics. Below is a live feed of my latest essays and research.
+				</p>
+				<a href="https://keenanclough.substack.com/subscribe" target="_blank" style="display: inline-block; padding: 8px 16px; background-color: var(--accent); color: white; text-decoration: none; border-radius: 5px; font-weight: bold;">
+					Subscribe on Substack
 				</a>
-			</p>
+			</div>
+
+			<ul class="article-list">
+				{articles.length > 0 ? (
+					articles.map((article) => {
+						// Format the date into a clean British standard (e.g., 20 April 2026)
+						const dateObj = new Date(article.pubDate);
+						const formattedDate = dateObj.toLocaleDateString('en-GB', {
+							day: 'numeric',
+							month: 'long',
+							year: 'numeric'
+						});
+
+						// Clean up the excerpt (Substack sometimes includes HTML in the description)
+						const cleanExcerpt = article.description.replace(/<[^>]+>/g, '').substring(0, 180) + '...';
+
+						return (
+							<li class="article-item">
+								<h2 class="article-title">
+									<a href={article.link} target="_blank" rel="noopener noreferrer">
+										{article.title}
+									</a>
+								</h2>
+								<span class="article-date">{formattedDate}</span>
+								<p class="article-excerpt">{cleanExcerpt}</p>
+								<a href={article.link} target="_blank" rel="noopener noreferrer" class="read-more">
+									Read full article →
+								</a>
+							</li>
+						);
+					})
+				) : (
+					<p><em>Loading latest broadcasts... If this persists, please visit <a href="https://keenanclough.substack.com" target="_blank">the Substack directly</a>.</em></p>
+				)}
+			</ul>
 		</main>
 		<Footer />
 	</body>
