@@ -2,6 +2,7 @@
 title: 'Initialising the Command Centre'
 description: 'Transitioning from policy to Python, and the purpose of this space.'
 pubDate: '2026-04-21'
+heroImage: '/blog-placeholder-2.pjg'
 ---
 
 This space serves as my digital lab notebook. 
