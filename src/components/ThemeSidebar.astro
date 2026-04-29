@@ -1,0 +1,27 @@
+---
+import { THEMES } from '../data/modules';
+---
+<nav class="theme-sidebar">
+  <ul>
+    {THEMES.map(theme => (
+      <li>
+        <button class="theme-btn" data-theme={theme.id}>
+          <span class="color-dot" style={`background-color: ${theme.color}`}></span>
+          {theme.label}
+        </button>
+      </li>
+    ))}
+  </ul>
+</nav>
+
+<style>
+  .theme-sidebar ul { list-style: none; padding: 0; margin: 0; }
+  .theme-btn {
+    display: flex; align-items: center; gap: 12px; width: 100%;
+    padding: 10px 16px; border: none; background: transparent;
+    color: var(--text-color); cursor: pointer; border-radius: 6px;
+    font-family: inherit; transition: background 0.2s;
+  }
+  .theme-btn:hover { background: rgba(255,255,255,0.05); }
+  .color-dot { width: 10px; height: 10px; border-radius: 50%; }
+</style>

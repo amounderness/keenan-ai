@@ -1,40 +1,57 @@
 ---
 import BaseHead from '../../components/BaseHead.astro';
-import plannerData from '../../data/planner.json';
+import ThemeSidebar from '../../components/ThemeSidebar.astro';
+import ModuleCard from '../../components/ModuleCard.astro';
+import { THEMES, getInitialModules } from '../../data/modules';
+import '../../styles/global.css'; // Consistent styling[cite: 1]
 
-const { dayTypes, taskBank } = plannerData;
+const modules = getInitialModules(); // Initial data load
 ---
 
 <!doctype html>
 <html lang="en-gb">
 	<head>
-		<BaseHead title="Daily Workshop" description="Modular Planning Control Centre" />
+		<BaseHead title="Planner Workshop" description="Build your modular life." />
 		<style>
-			.day-selector { display: flex; gap: 1rem; margin-bottom: 2rem; }
-			.block-container { border: 2px solid #333; padding: 1.5rem; margin-bottom: 1rem; border-radius: 8px; }
-			.task-menu { font-size: 0.9rem; color: #666; }
-			@media print { .no-print { display: none; } }
+			.workshop-layout {
+				display: grid; grid-template-columns: 240px 1fr;
+				min-height: 100vh; background: #0f0f0f; color: #e5e5e5;
+			}
+			aside { padding: 2rem; border-right: 1px solid #222; }
+			main { padding: 2rem; }
+			.module-grid {
+				display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+				gap: 1.5rem; margin-top: 2rem;
+			}
+			.empty-state {
+				text-align: center; padding: 4rem; border: 2px dashed #333; border-radius: 12px;
+			}
 		</style>
 	</head>
 	<body>
-		<main>
-			<h1>Modular Daily Planner</h1>
-			
-			<div class="day-selector no-print">
-				{Object.keys(dayTypes).map((key) => (
-					<button onclick={`window.location.search = 'type=${key}'`}>
-						{dayTypes[key].title}
-					</button>
-				))}
-			</div>
+		<div class="workshop-layout">
+			<aside>
+				<h2>Themes</h2>
+				<ThemeSidebar />
+			</aside>
+			<main>
+				<header>
+					<h1>Module Library</h1>
+					<p>Create and manage your draggable blocks.</p>
+				</header>
 
-			<section id="flight-plan">
-				<!-- Logic to display blocks based on URL parameter -->
-				<h2>Today's Flight Plan</h2>
-				<p><em>Transcription Target: Clipboard</em></p>
-				<hr />
-				<!-- Iterate through blocks and show task menus below -->
-			</section>
-		</main>
+				<div class="module-grid">
+					{modules.map(mod => {
+						const theme = THEMES.find(t => t.id === mod.themeId);
+						return <ModuleCard module={mod} themeColor={theme?.color} />
+					})}
+					
+					<button class="empty-state">
+						<h3>+ Create New Module</h3>
+						<p>Combine tasks into a reusable block.</p>
+					</button>
+				</div>
+			</main>
+		</div>
 	</body>
 </html>
