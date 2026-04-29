@@ -1,0 +1,40 @@
+---
+import BaseHead from '../../components/BaseHead.astro';
+import plannerData from '../../data/planner.json';
+
+const { dayTypes, taskBank } = plannerData;
+---
+
+<!doctype html>
+<html lang="en-gb">
+	<head>
+		<BaseHead title="Daily Workshop" description="Modular Planning Control Centre" />
+		<style>
+			.day-selector { display: flex; gap: 1rem; margin-bottom: 2rem; }
+			.block-container { border: 2px solid #333; padding: 1.5rem; margin-bottom: 1rem; border-radius: 8px; }
+			.task-menu { font-size: 0.9rem; color: #666; }
+			@media print { .no-print { display: none; } }
+		</style>
+	</head>
+	<body>
+		<main>
+			<h1>Modular Daily Planner</h1>
+			
+			<div class="day-selector no-print">
+				{Object.keys(dayTypes).map((key) => (
+					<button onclick={`window.location.search = 'type=${key}'`}>
+						{dayTypes[key].title}
+					</button>
+				))}
+			</div>
+
+			<section id="flight-plan">
+				<!-- Logic to display blocks based on URL parameter -->
+				<h2>Today's Flight Plan</h2>
+				<p><em>Transcription Target: Clipboard</em></p>
+				<hr />
+				<!-- Iterate through blocks and show task menus below -->
+			</section>
+		</main>
+	</body>
+</html>

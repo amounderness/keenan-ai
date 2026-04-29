@@ -1,0 +1,18 @@
+{
+  "dayTypes": {
+    "solo_sprint": {
+      "title": "Solo Sprint (Poppie in Office)",
+      "blocks": ["Deep Work", "Loud Chores", "Personal Space", "Reset"]
+    },
+    "coexistence": {
+      "title": "Co-existence (Poppie WFH)",
+      "blocks": ["Admin/Life", "Quiet Maintenance", "Connection", "Leisure"]
+    }
+  },
+  "taskBank": {
+    "Deep Work": ["Machine Learning Lab", "Programming Assignment", "System Analysis Notes"],
+    "Loud Chores": ["Hoovering the House", "Kitchen Blitz", "Laundry (Washer/Dryer)"],
+    "Admin/Life": ["Emails", "Uni Portal Checks", "Grocery List Planning"],
+    "Quiet Maintenance": ["Fold Laundry", "Organise Desk", "Water Plants"]
+  }
+}
