@@ -5,80 +5,80 @@ import ModuleCard from '../../components/ModuleCard.astro';
 import { THEMES, getInitialModules } from '../../data/modules';
 import '../../styles/global.css';
 
-const modules = getInitialModules(); 
+const initialModules = getInitialModules(); 
 ---
 
 <!doctype html>
 <html lang="en-gb">
 	<head>
-		<BaseHead title="Planner Building View" description="Customise your life modules." />
+		<BaseHead title="Planner Workshop" description="Bright and modular planning." />
+		<style>
+			:root { --sidebar-bg: #fdfdfd; --main-bg: #f8fafc; }
+			body { background: var(--main-bg); color: #1e293b; }
+			.workshop-shell { display: grid; grid-template-columns: 280px 1fr; min-height: 100vh; }
+			aside { background: var(--sidebar-bg); border-right: 1px solid #f1f5f9; padding: 2.5rem; }
+			main { padding: 3.5rem; max-width: 1200px; }
+			header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 3rem; }
+			h1 { font-size: 2.25rem; font-weight: 800; letter-spacing: -0.02em; color: #0f172a; margin: 0; }
+			.subtitle { color: #64748b; margin-top: 0.5rem; }
+			.module-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1.5rem; }
+			.add-card {
+				border: 2px dashed #e2e8f0; background: transparent; border-radius: 12px;
+				display: flex; flex-direction: column; align-items: center; justify-content: center;
+				min-height: 160px; cursor: pointer; transition: all 0.2s; color: #94a3b8;
+			}
+			.add-card:hover { border-color: #3b82f6; background: #eff6ff; color: #3b82f6; }
+		</style>
 	</head>
 	<body>
-		<div class="workshop-layout">
+		<div class="workshop-shell">
 			<aside>
-				<h2 class="sidebar-title">Themes</h2>
+				<h2 style="font-size: 0.75rem; text-transform: uppercase; color: #94a3b8; letter-spacing: 0.05em; margin-bottom: 2rem;">Aspects of Life</h2>
 				<ThemeSidebar />
 			</aside>
 			<main>
-				<header class="main-header">
+				<header>
 					<div>
-						<h1 id="current-theme-title">All Modules</h1>
-						<p>Organise your {THEMES.length} life themes.</p>
+						<h1>Planner Workshop</h1>
+						<p class="subtitle">Design the modules that make up your week.</p>
 					</div>
-					<button class="primary-add">+ New Module</button>
+					<button class="primary-btn" id="save-config">Save All Changes</button>
 				</header>
 
-				<div class="module-grid" id="module-grid">
-					{modules.map(mod => {
+				<div class="module-grid" id="main-grid">
+					{initialModules.map(mod => {
 						const theme = THEMES.find(t => t.id === mod.themeId);
-						return <ModuleCard module={mod} themeColor={theme?.color} />
+						return <ModuleCard module={mod} theme={theme} />
 					})}
+					<button class="add-card" id="open-creator">
+						<span style="font-size: 1.5rem; font-weight: 300;">+</span>
+						<span style="font-size: 0.85rem; font-weight: 600; margin-top: 0.5rem;">New Module</span>
+					</button>
 				</div>
 			</main>
 		</div>
 
 		<script>
-			const themeButtons = document.querySelectorAll('.theme-btn');
-			const cards = document.querySelectorAll('.module-card');
-			const title = document.getElementById('current-theme-title');
+			// Persistence Logic
+			let userModules = JSON.parse(localStorage.getItem('user_modules') || '[]');
 
+			// Save to localStorage when triggered
+			document.getElementById('save-config')?.addEventListener('click', () => {
+				localStorage.setItem('user_modules', JSON.stringify(userModules));
+				alert('Workspace saved locally!');
+			});
+
+			// Theme Filtering Logic
+			const themeButtons = document.querySelectorAll('.theme-btn');
 			themeButtons.forEach(btn => {
 				btn.addEventListener('click', () => {
-					const theme = btn.getAttribute('data-theme');
-					
-					// Update Active UI
-					themeButtons.forEach(b => b.classList.remove('active'));
-					btn.classList.add('active');
-					title.innerText = theme || "All Modules";
-
-					// Filter Cards
-					cards.forEach(card => {
-						if (!theme || card.getAttribute('data-theme') === theme) {
-							(card as HTMLElement).style.display = 'flex';
-						} else {
-							(card as HTMLElement).style.display = 'none';
-						}
+					const selectedTheme = btn.getAttribute('data-theme');
+					document.querySelectorAll('.module-card').forEach(card => {
+						const cardTheme = card.getAttribute('data-theme');
+						(card as HTMLElement).style.display = (!selectedTheme || cardTheme === selectedTheme) ? 'flex' : 'none';
 					});
 				});
 			});
 		</script>
-
-		<style>
-			.workshop-layout { display: grid; grid-template-columns: 260px 1fr; min-height: 100vh; background: #0a0a0a; }
-			aside { padding: 2rem; border-right: 1px solid #1a1a1a; background: #0f0f0f; }
-			main { padding: 3rem; overflow-y: auto; }
-			
-			.sidebar-title { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.1em; color: #555; margin-bottom: 1.5rem; }
-			.main-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 3rem; }
-			h1 { margin: 0; font-size: 2.5rem; letter-spacing: -0.03em; }
-			
-			.module-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 2rem; }
-			
-			.primary-add { 
-				background: #fff; color: #000; border: none; padding: 12px 24px; 
-				border-radius: 6px; font-weight: 700; cursor: pointer; transition: transform 0.1s;
-			}
-			.primary-add:active { transform: scale(0.95); }
-		</style>
 	</body>
 </html>

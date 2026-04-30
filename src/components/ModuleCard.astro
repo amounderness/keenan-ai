@@ -1,60 +1,60 @@
 ---
 import type { Module } from '../data/modules';
-const { module, themeColor } = Astro.props;
+const { module, theme } = Astro.props;
 ---
-<div class="module-card" data-theme={module.themeId} style={`--accent: ${themeColor}`}>
-  <div class="header">
-    <h3>{module.name}</h3>
-    {module.isInbox && <span class="badge">Inbox</span>}
+<div class="module-card" data-theme={module.themeId} data-id={module.id} style={`--bg: ${theme.color}; --text: ${theme.textColor}`}>
+  <div class="card-header">
+    <span class="theme-tag">{theme.label}</span>
+    {module.isInbox && <span class="inbox-badge">Inbox</span>}
   </div>
   
-  <div class="task-list">
-    {module.tasks.length > 0 ? (
-      module.tasks.slice(0, 3).map(task => (
-        <div class="task-item">
-          <input type="checkbox" disabled />
-          <span>{task.description}</span>
-        </div>
-      ))
-    ) : (
-      <p class="empty-msg">No tasks yet.</p>
-    )}
-    {module.tasks.length > 3 && <p class="more-count">+{module.tasks.length - 3} more</p>}
+  <h3>{module.name}</h3>
+  
+  <div class="task-preview">
+    {module.tasks.length} {module.tasks.length === 1 ? 'task' : 'tasks'}
   </div>
 
-  <div class="quick-add">
-    <input type="text" placeholder="Add task..." />
-  </div>
-
-  <div class="footer">
-    <span class="duration">{module.suggestedDuration}m</span>
-    <button class="edit-btn">Edit Module</button>
+  <div class="card-footer">
+    <span class="duration-chip">{module.suggestedDuration}m</span>
+    <button class="add-task-btn" title="Add task">+</button>
   </div>
 </div>
 
 <style>
   .module-card {
-    background: #1a1a1a; border-top: 4px solid var(--accent);
-    padding: 1.25rem; border-radius: 8px; display: flex; flex-direction: column; gap: 1rem;
-    transition: all 0.2s ease;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    padding: 1rem;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
   }
-  .module-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.5); }
-  
-  h3 { margin: 0; font-size: 1rem; letter-spacing: -0.01em; color: #fff; }
-  .badge { font-size: 0.65rem; background: var(--accent); color: #000; padding: 2px 6px; border-radius: 3px; font-weight: 800; text-transform: uppercase; }
-  
-  .task-list { display: flex; flex-direction: column; gap: 6px; min-height: 80px; }
-  .task-item { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: #ccc; }
-  .empty-msg { font-size: 0.8rem; color: #555; font-style: italic; }
-  
-  .quick-add input {
-    width: 100%; background: #000; border: 1px solid #333; color: #fff;
-    padding: 6px 10px; border-radius: 4px; font-size: 0.8rem;
+  .module-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+    border-color: var(--text);
   }
-  .quick-add input:focus { outline: none; border-color: var(--accent); }
-
-  .footer { display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem; }
-  .duration { font-size: 0.75rem; color: var(--accent); font-weight: bold; }
-  .edit-btn { background: transparent; border: 1px solid #444; color: #aaa; font-size: 0.7rem; padding: 4px 8px; border-radius: 4px; cursor: pointer; }
-  .edit-btn:hover { color: #fff; border-color: #666; }
+  .card-header { display: flex; justify-content: space-between; align-items: center; }
+  .theme-tag {
+    background: var(--bg);
+    color: var(--text);
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+  .inbox-badge { font-size: 0.7rem; color: #94a3b8; font-weight: 500; }
+  h3 { margin: 0; font-size: 1.1rem; font-weight: 600; color: #1e293b; }
+  .task-preview { font-size: 0.85rem; color: #64748b; }
+  .card-footer { display: flex; justify-content: space-between; align-items: center; margin-top: auto; }
+  .duration-chip { font-size: 0.75rem; color: #94a3b8; background: #f8fafc; padding: 2px 8px; border-radius: 4px; }
+  .add-task-btn {
+    border: 1px solid #e2e8f0; background: white; width: 24px; height: 24px;
+    border-radius: 6px; cursor: pointer; color: #64748b; transition: all 0.2s;
+  }
+  .add-task-btn:hover { background: var(--bg); color: var(--text); border-color: var(--text); }
 </style>

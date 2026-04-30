@@ -4,6 +4,7 @@ export interface Theme {
   id: ThemeID;
   label: string;
   color: string;
+  textColor: string;
   description: string;
 }
 
@@ -23,13 +24,13 @@ export interface Module {
 }
 
 export const THEMES: Theme[] = [
-  { id: 'University', label: 'University', color: '#3b82f6', description: 'Academic and portfolio work.' },
-  { id: 'Home', label: 'Home', color: '#10b981', description: 'Chores and house maintenance.' },
-  { id: 'Work', label: 'Work', color: '#f59e0b', description: 'Shifts and expenses.' },
-  { id: 'Social', label: 'Social', color: '#8b5cf6', description: 'Meet-ups and calls.' },
-  { id: 'Relationship', label: 'Relationship', color: '#ec4899', description: 'Shared activities and dates.' },
-  { id: 'Personal', label: 'Personal', color: '#6366f1', description: 'Self-care and downtime.' },
-  { id: 'Hobbies', label: 'Hobbies', color: '#64748b', description: 'Research and gaming.' },
+  { id: 'University', label: 'University', color: '#E1EFFE', textColor: '#1E429F', description: 'Academic and portfolio work.' },
+  { id: 'Home', label: 'Home', color: '#DEF7EC', textColor: '#03543F', description: 'Chores and house maintenance.' },
+  { id: 'Work', label: 'Work', color: '#FEF3C7', textColor: '#92400E', description: 'Shifts and expenses.' },
+  { id: 'Social', label: 'Social', color: '#EDEBFE', textColor: '#5521B5', description: 'Meet-ups and calls.' },
+  { id: 'Relationship', label: 'Relationship', color: '#FCE8F3', textColor: '#99154B', description: 'Shared activities and dates.' },
+  { id: 'Personal', label: 'Personal', color: '#E1E7FF', textColor: '#3730A3', description: 'Self-care and downtime.' },
+  { id: 'Hobbies', label: 'Hobbies', color: '#F3F4F6', textColor: '#1F2937', description: 'Research and gaming.' },
 ];
 
 // Helper to ensure every theme has an Inbox module
