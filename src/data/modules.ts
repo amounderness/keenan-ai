@@ -18,7 +18,6 @@ export interface Module {
   id: string;
   themeId: ThemeID;
   name: string;
-  suggestedDuration: number;
   tasks: Task[];
   isInbox?: boolean;
 }
@@ -33,13 +32,11 @@ export const THEMES: Theme[] = [
   { id: 'Hobbies', label: 'Hobbies', color: '#F3F4F6', textColor: '#1F2937', description: 'Research and gaming.' },
 ];
 
-// Helper to ensure every theme has an Inbox module
 export const getInitialModules = (): Module[] => {
   return THEMES.map(theme => ({
     id: `inbox-${theme.id.toLowerCase()}`,
     themeId: theme.id,
     name: `${theme.label} Inbox`,
-    suggestedDuration: 30,
     tasks: [],
     isInbox: true
   }));

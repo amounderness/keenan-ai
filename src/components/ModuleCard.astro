@@ -2,21 +2,20 @@
 import type { Module } from '../data/modules';
 const { module, theme } = Astro.props;
 ---
-<div class="module-card" data-theme={module.themeId} data-id={module.id} style={`--bg: ${theme.color}; --text: ${theme.textColor}`}>
+<div class="module-card" data-theme={module.themeId} style={`--bg: ${theme.color}; --text: ${theme.textColor}`}>
   <div class="card-header">
     <span class="theme-tag">{theme.label}</span>
     {module.isInbox && <span class="inbox-badge">Inbox</span>}
   </div>
   
-  <h3>{module.name}</h3>
+  <h3 class="card-title">{module.name}</h3>
   
   <div class="task-preview">
     {module.tasks.length} {module.tasks.length === 1 ? 'task' : 'tasks'}
   </div>
 
   <div class="card-footer">
-    <span class="duration-chip">{module.suggestedDuration}m</span>
-    <button class="add-task-btn" title="Add task">+</button>
+    <button class="edit-tasks-btn">Edit Tasks →</button>
   </div>
 </div>
 

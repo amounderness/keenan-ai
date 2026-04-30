@@ -12,7 +12,8 @@ const initialModules = getInitialModules();
 <html lang="en-gb">
 	<head>
 		<BaseHead title="Planner Workshop" description="Bright and modular planning." />
-		<style>
+		<style is:global>
+			/* The 'is:global' tag ensures JS-injected elements get these styles */
 			:root { 
 				--sidebar-bg: #fdfdfd; 
 				--main-bg: #f8fafc; 
@@ -21,13 +22,10 @@ const initialModules = getInitialModules();
 			body { background: var(--main-bg); color: #1e293b; font-family: 'Atkinson Hyperlegible', sans-serif; }
 			
 			.workshop-shell { display: grid; grid-template-columns: 280px 1fr; min-height: 100vh; }
-			
-			aside { background: var(--sidebar-bg); border-right: 1px solid #f1f5f9; padding: 2.5rem; }
-			
+			aside { background: var(--sidebar-bg); border-right: 1px solid #e2e8f0; padding: 2.5rem; }
 			main { padding: 3.5rem; max-width: 1200px; margin: 0 auto; width: 100%; }
 			
 			header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 3rem; }
-			
 			h1 { font-size: 2.25rem; font-weight: 800; letter-spacing: -0.02em; color: #0f172a; margin: 0; }
 			.subtitle { color: #64748b; margin-top: 0.5rem; }
 
@@ -40,13 +38,29 @@ const initialModules = getInitialModules();
 			.primary-btn:hover { opacity: 0.9; }
 
 			.add-card {
-				border: 2px dashed #e2e8f0; background: transparent; border-radius: 12px;
+				border: 2px dashed #cbd5e1; background: transparent; border-radius: 12px;
 				display: flex; flex-direction: column; align-items: center; justify-content: center;
-				min-height: 180px; cursor: pointer; transition: all 0.2s; color: #94a3b8;
+				min-height: 160px; cursor: pointer; transition: all 0.2s; color: #64748b;
 			}
 			.add-card:hover { border-color: var(--primary-blue); background: #eff6ff; color: var(--primary-blue); }
 
-			/* Modal Styles */
+			/* --- SHARED MODULE CARD STYLES --- */
+			.module-card {
+				background: #ffffff; border: 1px solid #e2e8f0; padding: 1.25rem; border-radius: 12px;
+				display: flex; flex-direction: column; gap: 0.75rem; transition: all 0.2s ease;
+				box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+			}
+			.module-card:hover { transform: translateY(-3px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); border-color: var(--text); }
+			.card-header { display: flex; justify-content: space-between; align-items: center; }
+			.theme-tag { background: var(--bg); color: var(--text); padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; }
+			.inbox-badge { font-size: 0.7rem; color: #94a3b8; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+			.card-title { margin: 0.5rem 0 0 0; font-size: 1.15rem; font-weight: 700; color: #0f172a; }
+			.task-preview { font-size: 0.9rem; color: #64748b; }
+			.card-footer { margin-top: auto; display: flex; justify-content: flex-end; padding-top: 1rem; }
+			.edit-tasks-btn { background: transparent; border: none; color: #3b82f6; font-size: 0.85rem; font-weight: 600; cursor: pointer; }
+			.edit-tasks-btn:hover { text-decoration: underline; }
+
+			/* --- MODAL STYLES --- */
 			.modal-overlay {
 				display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.4);
 				backdrop-filter: blur(4px); z-index: 1000; align-items: center; justify-content: center;
@@ -56,22 +70,24 @@ const initialModules = getInitialModules();
 				border-radius: 16px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
 			}
 			.modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
-			.modal-header h2 { font-size: 1.25rem; font-weight: 700; margin: 0; }
+			.modal-header h2 { font-size: 1.25rem; font-weight: 700; margin: 0; color: #0f172a; }
 			#close-modal { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #94a3b8; }
 			
 			.form-group { margin-bottom: 1.5rem; }
 			.form-group label { display: block; font-size: 0.85rem; font-weight: 600; color: #64748b; margin-bottom: 0.5rem; }
-			.form-group input { width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 8px; font-family: inherit; }
+			.form-group input { width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 8px; font-family: inherit; font-size: 1rem; }
+			.form-group input:focus { outline: 2px solid var(--primary-blue); outline-offset: -1px; }
 			
-			.theme-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.5rem; }
+			.theme-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem; }
 			.theme-option {
-				padding: 0.6rem; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 0.85rem;
-				text-align: center; cursor: pointer; transition: all 0.2s; font-weight: 500;
+				padding: 0.75rem; border: 2px solid transparent; border-radius: 8px; font-size: 0.9rem;
+				font-weight: 600; text-align: center; cursor: pointer; transition: all 0.15s;
 			}
-			.theme-option.selected { outline: 2px solid var(--primary-blue); font-weight: 700; }
+			.theme-option.selected { box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--primary-blue); transform: scale(0.98); }
 			
-			.form-footer { display: flex; justify-content: flex-end; gap: 1rem; margin-top: 2rem; }
-			.secondary-btn { background: #f1f5f9; border: none; padding: 0.75rem 1.5rem; border-radius: 8px; font-weight: 600; cursor: pointer; }
+			.form-footer { display: flex; justify-content: flex-end; gap: 1rem; margin-top: 2.5rem; }
+			.secondary-btn { background: #f1f5f9; color: #475569; border: none; padding: 0.75rem 1.5rem; border-radius: 8px; font-weight: 600; cursor: pointer; }
+			.secondary-btn:hover { background: #e2e8f0; }
 		</style>
 	</head>
 	<body>
@@ -87,17 +103,14 @@ const initialModules = getInitialModules();
 						<h1>Planner Workshop</h1>
 						<p class="subtitle">Design the modules that make up your week.</p>
 					</div>
-					<button class="primary-btn" id="save-config">Save to Cloud</button>
 				</header>
 
 				<div class="module-grid" id="main-grid">
-					<!-- 1. Static Inboxes Rendered by Astro -->
+					<!-- Server Rendered Inboxes -->
 					{initialModules.map(mod => {
 						const theme = THEMES.find(t => t.id === mod.themeId);
 						return <ModuleCard module={mod} theme={theme} />
 					})}
-
-					<!-- 2. Custom Modules will be injected here by JS -->
 					
 					<button class="add-card" id="open-creator">
 						<span style="font-size: 2rem; font-weight: 300;">+</span>
@@ -117,31 +130,27 @@ const initialModules = getInitialModules();
 				
 				<div class="form-group">
 					<label>Module Name</label>
-					<input type="text" id="new-module-name" placeholder="e.g. Portfolio Development" />
+					<input type="text" id="new-module-name" placeholder="e.g. Portfolio Development" autocomplete="off" />
 				</div>
 
 				<div class="form-group">
 					<label>Aspect of Life (Theme)</label>
-					<div class="theme-grid" id="modal-theme-grid">
-						<!-- JS will inject THEMES here -->
-					</div>
+					<div class="theme-grid" id="modal-theme-grid"></div>
 				</div>
 
 				<div class="form-footer">
 					<button class="secondary-btn" id="cancel-btn">Cancel</button>
-					<button class="primary-btn" id="confirm-create">Create Module</button>
+					<button class="primary-btn" id="confirm-create">Save Module</button>
 				</div>
 			</div>
 		</div>
 
 		<script define:vars={{ THEMES }}>
-			// 1. STATE MANAGEMENT
-			let selectedThemeId = 'University';
+			let selectedThemeId = THEMES[0].id;
 			const modal = document.getElementById('module-modal');
 			const themeGrid = document.getElementById('modal-theme-grid');
-			const mainGrid = document.getElementById('main-grid');
 
-			// 2. MODAL THEME INJECTION
+			// Populate Modal Themes cleanly
 			THEMES.forEach(theme => {
 				const div = document.createElement('div');
 				div.className = 'theme-option';
@@ -159,23 +168,23 @@ const initialModules = getInitialModules();
 				themeGrid.appendChild(div);
 			});
 
-			// 3. OPEN/CLOSE CONTROLS
-			document.getElementById('open-creator').onclick = () => modal.style.display = 'flex';
+			// Modal Controls
+			document.getElementById('open-creator').onclick = () => {
+				modal.style.display = 'flex';
+				document.getElementById('new-module-name').focus();
+			};
 			document.getElementById('close-modal').onclick = () => modal.style.display = 'none';
 			document.getElementById('cancel-btn').onclick = () => modal.style.display = 'none';
 
-			// 4. CREATE MODULE LOGIC[cite: 2]
+			// Create Module
 			document.getElementById('confirm-create').onclick = () => {
 				const nameInput = document.getElementById('new-module-name');
-				const name = nameInput.value;
-				
-				if (!name) return alert('Please name your module');
+				if (!nameInput.value.trim()) return alert('Please provide a name for this module.');
 
 				const newModule = {
 					id: `custom-${Date.now()}`,
 					themeId: selectedThemeId,
-					name: name,
-					suggestedDuration: 60,
+					name: nameInput.value.trim(),
 					tasks: []
 				};
 
@@ -183,53 +192,37 @@ const initialModules = getInitialModules();
 				userModules.push(newModule);
 				localStorage.setItem('user_modules', JSON.stringify(userModules));
 
-				// Reset and close
-				nameInput.value = '';
-				modal.style.display = 'none';
-				
-				// Re-render to show new module immediately
 				window.location.reload(); 
 			};
 
-			// 5. THEME FILTERING[cite: 2]
-			const themeButtons = document.querySelectorAll('.theme-btn');
-			themeButtons.forEach(btn => {
-				btn.addEventListener('click', () => {
-					const themeId = btn.getAttribute('data-theme');
-					const cards = document.querySelectorAll('.module-card');
-					
-					cards.forEach(card => {
-						const cardTheme = card.getAttribute('data-theme');
-						if (!themeId || cardTheme === themeId) {
-							card.style.display = 'flex';
-						} else {
-							card.style.display = 'none';
-						}
-					});
-				});
-			});
-
-			// 6. RENDER CUSTOM MODULES FROM LOCALSTORAGE
-			// Since Astro renders static items, we must manually append the custom ones on load
+			// Render Custom Modules
 			const customModules = JSON.parse(localStorage.getItem('user_modules') || '[]');
 			customModules.forEach(mod => {
 				const theme = THEMES.find(t => t.id === mod.themeId);
 				const cardHtml = `
 					<div class="module-card" data-theme="${mod.themeId}" style="--bg: ${theme.color}; --text: ${theme.textColor}">
 						<div class="card-header">
-							<span class="theme-tag" style="background: ${theme.color}; color: ${theme.textColor}">${theme.label}</span>
+							<span class="theme-tag">${theme.label}</span>
 						</div>
-						<h3 style="margin: 0.75rem 0; font-size: 1.1rem; font-weight: 600;">${mod.name}</h3>
-						<div style="font-size: 0.85rem; color: #64748b;">${mod.tasks.length} tasks</div>
-						<div style="margin-top: auto; display: flex; justify-content: space-between; align-items: center;">
-							<span style="font-size: 0.75rem; color: #94a3b8; background: #f8fafc; padding: 2px 8px; border-radius: 4px;">${mod.suggestedDuration}m</span>
-							<button class="add-task-btn" style="border: 1px solid #e2e8f0; background: white; width: 24px; height: 24px; border-radius: 6px; cursor: pointer; color: #64748b;">+</button>
+						<h3 class="card-title">${mod.name}</h3>
+						<div class="task-preview">${mod.tasks.length} tasks</div>
+						<div class="card-footer">
+							<button class="edit-tasks-btn">Edit Tasks →</button>
 						</div>
 					</div>
 				`;
-				// Insert before the "Add New" button
-				const addButton = document.getElementById('open-creator');
-				addButton.insertAdjacentHTML('beforebegin', cardHtml);
+				document.getElementById('open-creator').insertAdjacentHTML('beforebegin', cardHtml);
+			});
+
+			// Sidebar Filtering
+			document.querySelectorAll('.theme-btn').forEach(btn => {
+				btn.addEventListener('click', () => {
+					const themeId = btn.getAttribute('data-theme');
+					document.querySelectorAll('.module-card').forEach(card => {
+						const cardTheme = card.getAttribute('data-theme');
+						card.style.display = (!themeId || cardTheme === themeId) ? 'flex' : 'none';
+					});
+				});
 			});
 		</script>
 	</body>
