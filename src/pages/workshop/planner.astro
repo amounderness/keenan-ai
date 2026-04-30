@@ -3,55 +3,82 @@ import BaseHead from '../../components/BaseHead.astro';
 import ThemeSidebar from '../../components/ThemeSidebar.astro';
 import ModuleCard from '../../components/ModuleCard.astro';
 import { THEMES, getInitialModules } from '../../data/modules';
-import '../../styles/global.css'; // Consistent styling[cite: 1]
+import '../../styles/global.css';
 
-const modules = getInitialModules(); // Initial data load
+const modules = getInitialModules(); 
 ---
 
 <!doctype html>
 <html lang="en-gb">
 	<head>
-		<BaseHead title="Planner Workshop" description="Build your modular life." />
-		<style>
-			.workshop-layout {
-				display: grid; grid-template-columns: 240px 1fr;
-				min-height: 100vh; background: #0f0f0f; color: #e5e5e5;
-			}
-			aside { padding: 2rem; border-right: 1px solid #222; }
-			main { padding: 2rem; }
-			.module-grid {
-				display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-				gap: 1.5rem; margin-top: 2rem;
-			}
-			.empty-state {
-				text-align: center; padding: 4rem; border: 2px dashed #333; border-radius: 12px;
-			}
-		</style>
+		<BaseHead title="Planner Building View" description="Customise your life modules." />
 	</head>
 	<body>
 		<div class="workshop-layout">
 			<aside>
-				<h2>Themes</h2>
+				<h2 class="sidebar-title">Themes</h2>
 				<ThemeSidebar />
 			</aside>
 			<main>
-				<header>
-					<h1>Module Library</h1>
-					<p>Create and manage your draggable blocks.</p>
+				<header class="main-header">
+					<div>
+						<h1 id="current-theme-title">All Modules</h1>
+						<p>Organise your {THEMES.length} life themes.</p>
+					</div>
+					<button class="primary-add">+ New Module</button>
 				</header>
 
-				<div class="module-grid">
+				<div class="module-grid" id="module-grid">
 					{modules.map(mod => {
 						const theme = THEMES.find(t => t.id === mod.themeId);
 						return <ModuleCard module={mod} themeColor={theme?.color} />
 					})}
-					
-					<button class="empty-state">
-						<h3>+ Create New Module</h3>
-						<p>Combine tasks into a reusable block.</p>
-					</button>
 				</div>
 			</main>
 		</div>
+
+		<script>
+			const themeButtons = document.querySelectorAll('.theme-btn');
+			const cards = document.querySelectorAll('.module-card');
+			const title = document.getElementById('current-theme-title');
+
+			themeButtons.forEach(btn => {
+				btn.addEventListener('click', () => {
+					const theme = btn.getAttribute('data-theme');
+					
+					// Update Active UI
+					themeButtons.forEach(b => b.classList.remove('active'));
+					btn.classList.add('active');
+					title.innerText = theme || "All Modules";
+
+					// Filter Cards
+					cards.forEach(card => {
+						if (!theme || card.getAttribute('data-theme') === theme) {
+							(card as HTMLElement).style.display = 'flex';
+						} else {
+							(card as HTMLElement).style.display = 'none';
+						}
+					});
+				});
+			});
+		</script>
+
+		<style>
+			.workshop-layout { display: grid; grid-template-columns: 260px 1fr; min-height: 100vh; background: #0a0a0a; }
+			aside { padding: 2rem; border-right: 1px solid #1a1a1a; background: #0f0f0f; }
+			main { padding: 3rem; overflow-y: auto; }
+			
+			.sidebar-title { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.1em; color: #555; margin-bottom: 1.5rem; }
+			.main-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 3rem; }
+			h1 { margin: 0; font-size: 2.5rem; letter-spacing: -0.03em; }
+			
+			.module-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 2rem; }
+			
+			.primary-add { 
+				background: #fff; color: #000; border: none; padding: 12px 24px; 
+				border-radius: 6px; font-weight: 700; cursor: pointer; transition: transform 0.1s;
+			}
+			.primary-add:active { transform: scale(0.95); }
+		</style>
 	</body>
 </html>
