@@ -1,0 +1,230 @@
+---
+// src/pages/worldcup/players/[player].astro
+import BaseHead from '../../../components/BaseHead.astro';
+import Header from '../../../components/Header.astro';
+import Footer from '../../../components/Footer.astro';
+import TeamCard from '../../../components/worldcup/TeamCard.astro';
+import { teams, getRankSummary } from '../../../data/worldcup/teams';
+import { matches } from '../../../data/worldcup/matches';
+import type { Player } from '../../../data/worldcup/teams';
+
+// 1. Tell Astro which routes to generate at build time
+export function getStaticPaths() {
+  return [
+    { params: { player: 'keenan' } },
+    { params: { player: 'poppie' } },
+  ];
+}
+
+// 2. Get the current player from the URL and format the name
+const { player } = Astro.params;
+const playerName = (player.charAt(0).toUpperCase() + player.slice(1)) as Player;
+
+// 3. Fetch data specific to this player
+const myTeams = teams.filter(t => t.owner === playerName);
+const myTeamCodes = myTeams.map(t => t.id);
+const myStats = getRankSummary(playerName);
+
+// 4. Filter matches involving this player's teams
+const myMatches = matches.filter(m => 
+	myTeamCodes.includes(m.homeTeamCode) || myTeamCodes.includes(m.awayTeamCode)
+);
+
+// 5. Calculate "Next Match Day" logic
+const now = new Date();
+const scheduledMatches = myMatches
+	.filter(m => m.status === 'scheduled' && new Date(m.kickoffUtc) > now)
+	.sort((a, b) => new Date(a.kickoffUtc).getTime() - new Date(b.kickoffUtc).getTime());
+
+let nextMatchDayMatches: typeof matches = [];
+let daysAwayText = "No upcoming matches";
+
+if (scheduledMatches.length > 0) {
+	// Find the date of the very next match
+	const nextDate = new Date(scheduledMatches[0].kickoffUtc);
+	const nextDateString = nextDate.toDateString();
+	
+	// Group ALL matches that happen on that exact same day for this player
+	nextMatchDayMatches = scheduledMatches.filter(m => 
+		new Date(m.kickoffUtc).toDateString() === nextDateString
+	);
+
+	// Calculate "Days Away" based on the start of the day
+	const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+	const matchDay = new Date(nextDate.getFullYear(), nextDate.getMonth(), nextDate.getDate());
+	const diffTime = Math.abs(matchDay.getTime() - today.getTime());
+	const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
+
+	if (diffDays === 0) daysAwayText = "Today";
+	else if (diffDays === 1) daysAwayText = "Tomorrow";
+	else daysAwayText = `In ${diffDays} days`;
+}
+
+// Helper to format match times
+const formatTime = (dateString: string) => {
+  return new Date(dateString).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+};
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title={`${playerName}'s Dashboard | World Cup Sweepstake`} description={`Personal dashboard and upcoming fixtures for ${playerName}.`} />
+		<style>
+			.page-header { text-align: center; margin-bottom: 3rem; }
+			.back-link { display: inline-block; margin-bottom: 2rem; color: #0ea5e9; text-decoration: none; font-weight: 600; }
+			.back-link:hover { text-decoration: underline; }
+			
+			.dashboard-grid {
+				display: grid;
+				grid-template-columns: 1fr 300px;
+				gap: 2rem;
+				margin-bottom: 4rem;
+			}
+			@media (max-width: 800px) {
+				.dashboard-grid { grid-template-columns: 1fr; }
+			}
+
+			/* Up Next Section */
+			.up-next-section {
+				background: #f8fafc;
+				border: 2px solid #e2e8f0;
+				border-radius: 12px;
+				padding: 2rem;
+			}
+			.up-next-header {
+				display: flex;
+				justify-content: space-between;
+				align-items: flex-end;
+				border-bottom: 2px solid #cbd5e1;
+				padding-bottom: 1rem;
+				margin-bottom: 1.5rem;
+			}
+			.up-next-header h2 { margin: 0; color: #0f172a; }
+			.days-away {
+				background: #0f172a;
+				color: white;
+				padding: 0.4rem 0.8rem;
+				border-radius: 6px;
+				font-size: 0.9rem;
+				font-weight: bold;
+			}
+			.mini-match-card {
+				background: white;
+				border: 1px solid #cbd5e1;
+				border-radius: 8px;
+				padding: 1rem;
+				margin-bottom: 1rem;
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+			}
+			.mini-match-time { font-weight: bold; color: #3b82f6; width: 60px; }
+			.mini-match-teams { flex: 1; text-align: center; font-size: 1.1rem; font-weight: 600; }
+			.mini-match-group { width: 60px; text-align: right; color: #64748b; font-size: 0.85rem; text-transform: uppercase; }
+			
+			.head-to-head-alert {
+				background: #fef2f2;
+				color: #991b1b;
+				border: 1px solid #fecaca;
+				padding: 0.5rem;
+				border-radius: 6px;
+				text-align: center;
+				font-size: 0.85rem;
+				font-weight: bold;
+				margin-top: 0.5rem;
+			}
+
+			/* Sidebar Stats */
+			.stats-sidebar {
+				display: flex;
+				flex-direction: column;
+				gap: 1.5rem;
+			}
+			.score-card {
+				background: #ffffff;
+				border: 1px solid #e2e8f0;
+				border-radius: 12px;
+				padding: 1.5rem;
+				text-align: center;
+				box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+			}
+			.score-card h3 { margin-top: 0; font-size: 1.2rem; color: #475569; }
+			.huge-score { font-size: 3.5rem; font-weight: 900; color: #0f172a; line-height: 1; margin: 1rem 0; }
+			.score-label { color: #64748b; font-size: 0.9rem; }
+			
+			/* My Teams Grid */
+			.my-teams-header { margin-top: 3rem; margin-bottom: 1.5rem; border-bottom: 2px solid #e2e8f0; padding-bottom: 0.5rem; }
+			.teams-grid {
+				display: grid;
+				grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+				gap: 1.5rem;
+			}
+		</style>
+	</head>
+	<body>
+		<Header />
+		<main>
+			<a href="/worldcup" class="back-link">&larr; Back to Hub</a>
+			
+			<div class="page-header">
+				<h1>{playerName}'s Dashboard</h1>
+				<p>Your sweepstake command centre.</p>
+			</div>
+
+			<div class="dashboard-grid">
+				<!-- Left Column: Up Next -->
+				<div class="up-next-section">
+					<div class="up-next-header">
+						<h2>Up Next</h2>
+						<span class="days-away">{daysAwayText}</span>
+					</div>
+
+					{nextMatchDayMatches.length === 0 ? (
+						<p>No upcoming matches scheduled.</p>
+					) : (
+						nextMatchDayMatches.map(match => {
+							const homeTeam = teams.find(t => t.id === match.homeTeamCode);
+							const awayTeam = teams.find(t => t.id === match.awayTeamCode);
+							const isHeadToHead = homeTeam?.owner !== awayTeam?.owner;
+
+							return (
+								<div class="mini-match-card">
+									<div class="mini-match-time">{formatTime(match.kickoffUtc)}</div>
+									<div class="mini-match-teams">
+										{homeTeam?.name || match.homeTeamCode} vs {awayTeam?.name || match.awayTeamCode}
+										{isHeadToHead && <div class="head-to-head-alert">⚠️ Head-to-Head Clash!</div>}
+									</div>
+									<div class="mini-match-group">Grp {match.group}</div>
+								</div>
+							)
+						})
+					)}
+				</div>
+
+				<!-- Right Column: Stats -->
+				<div class="stats-sidebar">
+					<div class="score-card">
+						<h3>Total Points</h3>
+						<div class="huge-score">0</div>
+						<div class="score-label">Phase 4 Feature</div>
+					</div>
+					<div class="score-card">
+						<h3>Teams Remaining</h3>
+						<div class="huge-score">{myStats.totalTeams}</div>
+						<div class="score-label">Active in Tournament</div>
+					</div>
+				</div>
+			</div>
+
+			<h2 class="my-teams-header">My Squad</h2>
+			<div class="teams-grid">
+				{myTeams.map(team => (
+					<TeamCard team={team} />
+				))}
+			</div>
+
+		</main>
+		<Footer />
+	</body>
+</html>
