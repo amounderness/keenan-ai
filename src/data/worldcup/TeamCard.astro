@@ -1,0 +1,112 @@
+---
+// src/components/worldcup/TeamCard.astro
+import type { Team } from '../../data/worldcup/teams';
+
+interface Props {
+	team: Team;
+}
+
+const { team } = Astro.props;
+
+// Assign a distinct colour class based on the owner
+const badgeClass = team.owner === 'Keenan' ? 'badge-keenan' : 'badge-poppie';
+---
+
+<div class="team-card">
+	<div class="team-header">
+		<h4 class="team-name">{team.name} <span class="team-code">({team.id})</span></h4>
+		<span class={`owner-badge ${badgeClass}`}>{team.owner}</span>
+	</div>
+	
+	<div class="team-stats">
+		<div class="stat-box">
+			<span class="stat-label">Pos</span>
+			<span class="stat-value">{team.groupPosition}</span>
+		</div>
+		<div class="stat-box">
+			<span class="stat-label">World Rank</span>
+			<span class="stat-value">#{team.worldRank}</span>
+		</div>
+		<div class="stat-box">
+			<span class="stat-label">Tier</span>
+			<span class="stat-value">{team.tier}</span>
+		</div>
+	</div>
+</div>
+
+<style>
+	.team-card {
+		background: #ffffff;
+		border: 1px solid #e2e8f0;
+		border-radius: 8px;
+		padding: 1.25rem;
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
+		box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+		transition: transform 0.1s ease, box-shadow 0.1s ease;
+	}
+	.team-card:hover {
+		transform: translateY(-2px);
+		box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+	}
+	.team-header {
+		display: flex;
+		justify-content: space-between;
+		align-items: flex-start;
+		gap: 0.5rem;
+	}
+	.team-name {
+		margin: 0;
+		font-size: 1.1rem;
+		color: #0f172a;
+		line-height: 1.2;
+	}
+	.team-code {
+		font-size: 0.85rem;
+		color: #64748b;
+		font-weight: normal;
+	}
+	.owner-badge {
+		font-size: 0.75rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		padding: 0.25rem 0.6rem;
+		border-radius: 9999px;
+		letter-spacing: 0.025em;
+	}
+	.badge-keenan {
+		background-color: #e0f2fe;
+		color: #0369a1;
+	}
+	.badge-poppie {
+		background-color: #fce7f3;
+		color: #be185d;
+	}
+	.team-stats {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: 0.5rem;
+		background-color: #f8fafc;
+		border: 1px solid #f1f5f9;
+		border-radius: 6px;
+		padding: 0.5rem;
+	}
+	.stat-box {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		text-align: center;
+	}
+	.stat-label {
+		font-size: 0.7rem;
+		color: #64748b;
+		text-transform: uppercase;
+		margin-bottom: 0.25rem;
+	}
+	.stat-value {
+		font-size: 0.95rem;
+		font-weight: 600;
+		color: #334155;
+	}
+</style>

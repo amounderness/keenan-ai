@@ -1,0 +1,88 @@
+---
+// src/pages/worldcup/groups.astro
+import BaseHead from '../../components/BaseHead.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import TeamCard from '../../components/worldcup/TeamCard.astro';
+import { getTeamsByGroup } from '../../data/worldcup/teams';
+import type { Group } from '../../data/worldcup/teams';
+
+// Define the 12 tournament groups
+const groups: Group[] = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'];
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title="Tournament Groups | World Cup Sweepstake" description="View all 12 groups, team allocations, and ranks." />
+		<style>
+			.page-header {
+				text-align: center;
+				margin-bottom: 3rem;
+			}
+			.page-header h1 {
+				margin-bottom: 0.5rem;
+			}
+			.back-link {
+				display: inline-block;
+				margin-bottom: 2rem;
+				color: #0ea5e9;
+				text-decoration: none;
+				font-weight: 600;
+			}
+			.back-link:hover {
+				text-decoration: underline;
+			}
+			.groups-container {
+				display: flex;
+				flex-direction: column;
+				gap: 3rem;
+				margin-bottom: 4rem;
+			}
+			.group-section {
+				background: #f8fafc;
+				border: 1px solid #cbd5e1;
+				border-radius: 12px;
+				padding: 1.5rem;
+			}
+			.group-title {
+				margin-top: 0;
+				margin-bottom: 1.5rem;
+				font-size: 1.5rem;
+				color: #0f172a;
+				border-bottom: 2px solid #e2e8f0;
+				padding-bottom: 0.5rem;
+			}
+			.teams-grid {
+				display: grid;
+				grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+				gap: 1.5rem;
+			}
+		</style>
+	</head>
+	<body>
+		<Header />
+		<main>
+			<a href="/worldcup" class="back-link">&larr; Back to Hub</a>
+			
+			<div class="page-header">
+				<h1>Tournament Groups</h1>
+				<p>All 12 groups detailing the 2-2 sweepstake splits, draw tiers, and world ranks.</p>
+			</div>
+
+			<div class="groups-container">
+				{groups.map((group) => (
+					<section class="group-section" id={`group-${group.toLowerCase()}`}>
+						<h2 class="group-title">Group {group}</h2>
+						<div class="teams-grid">
+							{getTeamsByGroup(group).map((team) => (
+								<TeamCard team={team} />
+							))}
+						</div>
+					</section>
+				))}
+			</div>
+		</main>
+		<Footer />
+	</body>
+</html>
