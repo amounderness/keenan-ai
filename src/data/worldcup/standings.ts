@@ -91,3 +91,26 @@ export function getGroupStandings(group: Group): TeamStanding[] {
 
   return standings;
 }
+
+export function getThirdPlaceStandings(): TeamStanding[] {
+  const groups: Group[] = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'];
+  const thirdPlaceTeams: TeamStanding[] = [];
+
+  groups.forEach(group => {
+    const groupTable = getGroupStandings(group);
+    // In a zero-indexed array, index 2 is the 3rd placed team
+    if (groupTable.length >= 3) {
+      thirdPlaceTeams.push(groupTable[2]);
+    }
+  });
+
+  // Sort by official wildcard hierarchy (Points -> GD -> GF)
+  thirdPlaceTeams.sort((a, b) => {
+    if (b.points !== a.points) return b.points - a.points;
+    if (b.goalDifference !== a.goalDifference) return b.goalDifference - a.goalDifference;
+    if (b.goalsFor !== a.goalsFor) return b.goalsFor - a.goalsFor;
+    return (b.tiebreakerScore || 0) - (a.tiebreakerScore || 0);
+  });
+
+  return thirdPlaceTeams;
+}

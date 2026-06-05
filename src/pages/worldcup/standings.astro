@@ -3,8 +3,10 @@
 import BaseHead from '../../components/BaseHead.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
-import { getGroupStandings } from '../../data/worldcup/standings';
+import { getGroupStandings, getThirdPlaceStandings } from '../../data/worldcup/standings';
 import type { Group } from '../../data/worldcup/teams';
+
+const wildcardStandings = getThirdPlaceStandings(); // Fetch the wildcards
 
 const groups: Group[] = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'];
 ---
@@ -100,6 +102,18 @@ const groups: Group[] = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 
 			tr:nth-child(4) td.team-col {
 				border-left: 4px solid #ef4444; /* Red: Eliminated */
 			}
+			/* Wildcard Table specific styling */
+			.wildcard-table tr.qualifies td.team-col {
+				border-left: 4px solid #10b981; /* Green: Advancing */
+			}
+			.wildcard-table tr.eliminated td.team-col {
+				border-left: 4px solid #ef4444; /* Red: Going Home */
+			}
+			.wildcard-header {
+				margin-top: 4rem;
+				text-align: center;
+				margin-bottom: 2rem;
+			}
 		</style>
 	</head>
 	<body>
@@ -150,6 +164,51 @@ const groups: Group[] = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 
 						</div>
 					);
 				})}
+			</div>
+			<!-- Wildcard Table Section -->
+			<div class="wildcard-header">
+				<h2>Best Third-Placed Teams</h2>
+				<p>The top 8 teams advance to the Round of 32.</p>
+			</div>
+
+			<div class="group-table-container" style="max-width: 600px; margin: 0 auto 4rem auto;">
+				<h3 class="group-header" style="background: #334155;">Third-Place Wildcards</h3>
+				<table class="wildcard-table">
+					<thead>
+						<tr>
+							<th class="team-col">Team</th>
+							<th>Grp</th>
+							<th>P</th>
+							<th>W</th>
+							<th>D</th>
+							<th>L</th>
+							<th>GD</th>
+							<th class="pts-col">Pts</th>
+						</tr>
+					</thead>
+					<tbody>
+						{wildcardStandings.map((team, index) => {
+							const originalTeam = teams.find(t => t.id === team.id);
+							// Top 8 qualify, the rest are eliminated
+							const rowClass = index < 8 ? 'qualifies' : 'eliminated';
+							return (
+								<tr class={rowClass}>
+									<td class="team-col">
+										{team.name}
+										<span class={`owner-tag owner-${team.owner.toLowerCase()}`}>{team.owner.charAt(0)}</span>
+									</td>
+									<td style="font-weight: bold; color: #64748b;">{originalTeam?.group}</td>
+									<td>{team.played}</td>
+									<td>{team.won}</td>
+									<td>{team.drawn}</td>
+									<td>{team.lost}</td>
+									<td>{team.goalDifference > 0 ? `+${team.goalDifference}` : team.goalDifference}</td>
+									<td class="pts-col">{team.points}</td>
+								</tr>
+							);
+						})}
+					</tbody>
+				</table>
 			</div>
 		</main>
 		<Footer />

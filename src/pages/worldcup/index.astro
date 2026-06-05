@@ -5,6 +5,7 @@ import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import { getRankSummary } from '../../data/worldcup/teams';
 import { calculatePlayerScore } from '../../data/worldcup/scoring';
+import { teams } from '../../data/worldcup/teams';
 
 const keenanStats = getRankSummary('Keenan');
 const poppieStats = getRankSummary('Poppie');
@@ -22,6 +23,9 @@ if (keenanScore.totalPoints > poppieScore.totalPoints) {
 	leader = 'poppie';
 	leaderText = "🏆 Poppie is in the lead!";
 }
+
+const keenanActive = teams.filter(t => t.owner === 'Keenan' && t.status !== 'eliminated').length;
+const poppieActive = teams.filter(t => t.owner === 'Poppie' && t.status !== 'eliminated').length;
 ---
 
 <!doctype html>
@@ -152,6 +156,26 @@ if (keenanScore.totalPoints > poppieScore.totalPoints) {
 				min-width: 150px;
 				transition: all 0.2s ease;
 			}
+			.survival-strip {
+				display: flex;
+				justify-content: center;
+				gap: 2rem;
+				margin-top: 1rem;
+			}
+			.survival-badge {
+				background: rgba(255, 255, 255, 0.1);
+				padding: 0.5rem 1rem;
+				border-radius: 99px;
+				font-size: 0.9rem;
+				color: #e2e8f0;
+				display: flex;
+				gap: 0.5rem;
+				align-items: center;
+			}
+			.survival-count {
+				font-weight: 800;
+				color: #fff;
+			}
 			
 background-color: #e0feec;
 		color: #0d9488;
@@ -224,6 +248,28 @@ background-color: #e0feec;
 					</div>
 				</div>
 				<p class={`leader-text text-${leader}`}>{leaderText}</p>
+				<!-- Inside .leaderboard-banner, right below the <p class="leader-text"> -->
+			<div class="survival-strip">
+				<div class="survival-badge">
+					<span>Keenan's Active Squad:</span>
+					<span class="survival-count">{keenanActive} / 24</span>
+				</div>
+				<div class="survival-badge">
+					<span>Poppie's Active Squad:</span>
+					<span class="survival-count">{poppieActive} / 24</span>
+				</div>
+			</div>
+			</div>
+
+			<div class="survival-strip">
+  				<div class="survival-box keenan">
+    				<span>Keenan's Squad Survival</span>
+    				<strong>{keenanActiveCount} / 24 Active</strong>
+  				</div>
+  				<div class="survival-box poppie">
+    				<span>Poppie's Squad Survival</span>
+    				<strong>{poppieActiveCount} / 24 Active</strong>
+  				</div>
 			</div>
 
 			<div class="stats-grid">
