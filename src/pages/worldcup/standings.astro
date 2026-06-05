@@ -1,0 +1,151 @@
+---
+// src/pages/worldcup/standings.astro
+import BaseHead from '../../components/BaseHead.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import { getGroupStandings } from '../../data/worldcup/standings';
+import type { Group } from '../../data/worldcup/teams';
+
+const groups: Group[] = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'];
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title="Group Standings | World Cup Sweepstake" description="Live group tables based on match results." />
+		<style>
+			.page-header { text-align: center; margin-bottom: 3rem; }
+			.back-link { display: inline-block; margin-bottom: 2rem; color: #0ea5e9; text-decoration: none; font-weight: 600; }
+			.back-link:hover { text-decoration: underline; }
+			
+			.standings-grid {
+				display: grid;
+				grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+				gap: 2rem;
+				margin-bottom: 4rem;
+			}
+			
+			.group-table-container {
+				background: #ffffff;
+				border: 1px solid #e2e8f0;
+				border-radius: 8px;
+				overflow: hidden;
+				box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+			}
+			
+			.group-header {
+				background: #0f172a;
+				color: white;
+				padding: 0.75rem 1rem;
+				font-weight: bold;
+				font-size: 1.1rem;
+				margin: 0;
+			}
+
+			table {
+				width: 100%;
+				border-collapse: collapse;
+				font-size: 0.9rem;
+			}
+			th {
+				background: #f8fafc;
+				color: #64748b;
+				font-weight: 600;
+				text-transform: uppercase;
+				font-size: 0.75rem;
+				padding: 0.5rem;
+				text-align: center;
+				border-bottom: 1px solid #e2e8f0;
+			}
+			th.team-col { text-align: left; padding-left: 1rem; }
+			
+			td {
+				padding: 0.75rem 0.5rem;
+				text-align: center;
+				border-bottom: 1px solid #f1f5f9;
+				color: #334155;
+			}
+			tr:last-child td { border-bottom: none; }
+			
+			td.team-col {
+				text-align: left;
+				padding-left: 1rem;
+				font-weight: 600;
+				color: #0f172a;
+				display: flex;
+				align-items: center;
+				gap: 0.5rem;
+			}
+			
+			.owner-tag {
+				font-size: 0.65rem;
+				padding: 0.15rem 0.4rem;
+				border-radius: 4px;
+				text-transform: uppercase;
+				font-weight: bold;
+			}
+			.owner-keenan { background: #e0f2fe; color: #0369a1; }
+			.owner-poppie { background: #fce7f3; color: #be185d; }
+			
+			.pts-col { font-weight: bold; color: #0f172a; background: #f8fafc; }
+			
+			/* Top 2 qualification styling */
+			tr:nth-child(1) td.team-col,
+			tr:nth-child(2) td.team-col {
+				border-left: 3px solid #10b981; /* Green indicator for automatic qualification */
+			}
+		</style>
+	</head>
+	<body>
+		<Header />
+		<main>
+			<a href="/worldcup" class="back-link">&larr; Back to Hub</a>
+			
+			<div class="page-header">
+				<h1>Group Standings</h1>
+				<p>Automatically calculated from fixture results.</p>
+			</div>
+
+			<div class="standings-grid">
+				{groups.map(group => {
+					const standings = getGroupStandings(group);
+					return (
+						<div class="group-table-container">
+							<h3 class="group-header">Group {group}</h3>
+							<table>
+								<thead>
+									<tr>
+										<th class="team-col">Team</th>
+										<th>P</th>
+										<th>W</th>
+										<th>D</th>
+										<th>L</th>
+										<th>GD</th>
+										<th class="pts-col">Pts</th>
+									</tr>
+								</thead>
+								<tbody>
+									{standings.map((team) => (
+										<tr>
+											<td class="team-col">
+												{team.name}
+												<span class={`owner-tag owner-${team.owner.toLowerCase()}`}>{team.owner.charAt(0)}</span>
+											</td>
+											<td>{team.played}</td>
+											<td>{team.won}</td>
+											<td>{team.drawn}</td>
+											<td>{team.lost}</td>
+											<td>{team.goalDifference > 0 ? `+${team.goalDifference}` : team.goalDifference}</td>
+											<td class="pts-col">{team.points}</td>
+										</tr>
+									))}
+								</tbody>
+							</table>
+						</div>
+					);
+				})}
+			</div>
+		</main>
+		<Footer />
+	</body>
+</html>

@@ -20,8 +20,10 @@ export function getStaticPaths() {
 const { player } = Astro.params;
 const playerName = (player.charAt(0).toUpperCase() + player.slice(1)) as Player;
 
-// 3. Fetch data specific to this player
-const myTeams = teams.filter(t => t.owner === playerName);
+// 3. Fetch data specific to this player and sort by Tournament Rank
+const myTeams = teams
+	.filter(t => t.owner === playerName)
+	.sort((a, b) => a.tournamentRank - b.tournamentRank);
 const myTeamCodes = myTeams.map(t => t.id);
 const myStats = getRankSummary(playerName);
 
@@ -119,7 +121,7 @@ const formatTime = (dateString: string) => {
 				justify-content: space-between;
 				align-items: center;
 			}
-			.mini-match-time { font-weight: bold; color: #3b82f6; width: 60px; }
+			.mini-match-time { font-weight: bold; color: #3b82f6; min-width: 65px; white-space: nowrap; flex-shrink: 0; }
 			.mini-match-teams { flex: 1; text-align: center; font-size: 1.1rem; font-weight: 600; }
 			.mini-match-group { width: 60px; text-align: right; color: #64748b; font-size: 0.85rem; text-transform: uppercase; }
 			
