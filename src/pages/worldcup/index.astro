@@ -1,4 +1,5 @@
 ---
+// src/pages/worldcup/index.astro
 import BaseHead from '../../components/BaseHead.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
@@ -11,10 +12,14 @@ const poppieStats = getRankSummary('Poppie');
 const keenanScore = calculatePlayerScore('Keenan');
 const poppieScore = calculatePlayerScore('Poppie');
 
+let leader = 'tie';
 let leaderText = "It's a tie!";
+
 if (keenanScore.totalPoints > poppieScore.totalPoints) {
+	leader = 'keenan';
 	leaderText = "🏆 Keenan is in the lead!";
 } else if (poppieScore.totalPoints > keenanScore.totalPoints) {
+	leader = 'poppie';
 	leaderText = "🏆 Poppie is in the lead!";
 }
 ---
@@ -78,6 +83,7 @@ if (keenanScore.totalPoints > poppieScore.totalPoints) {
 			}
 			.nav-card {
 				display: flex;
+				flex-direction: column;
 				align-items: center;
 				justify-content: center;
 				padding: 1.5rem;
@@ -86,7 +92,6 @@ if (keenanScore.totalPoints > poppieScore.totalPoints) {
 				border-radius: 8px;
 				text-decoration: none;
 				color: #334155;
-				font-weight: bold;
 				transition: all 0.2s ease;
 				text-align: center;
 			}
@@ -95,24 +100,13 @@ if (keenanScore.totalPoints > poppieScore.totalPoints) {
 				border-color: #0f172a;
 				color: #ffffff;
 			}
+			.nav-card:hover:not(.disabled) .nav-desc {
+				color: #cbd5e1;
+			}
 			.nav-card.disabled {
 				opacity: 0.5;
 				cursor: not-allowed;
 				background: #f1f5f9;
-			}
-			.nav-card {
-				display: flex;
-				flex-direction: column; /* Changed to stack text */
-				align-items: center;
-				justify-content: center;
-				padding: 1.5rem;
-				background: #f8fafc;
-				border: 2px solid #cbd5e1;
-				border-radius: 8px;
-				text-decoration: none;
-				color: #334155;
-				transition: all 0.2s ease;
-				text-align: center;
 			}
 			.nav-title {
 				font-weight: bold;
@@ -123,9 +117,7 @@ if (keenanScore.totalPoints > poppieScore.totalPoints) {
 				font-size: 0.85rem;
 				color: #64748b;
 			}
-			.nav-card:hover:not(.disabled) .nav-desc {
-				color: #cbd5e1; /* Lightens description on hover */
-			}
+
 			/* Leaderboard Banner Styles */
 			.leaderboard-banner {
 				background: #0f172a;
@@ -156,39 +148,53 @@ if (keenanScore.totalPoints > poppieScore.totalPoints) {
 				padding: 1rem 2rem;
 				border-radius: 8px;
 				background: rgba(255, 255, 255, 0.05);
-				border: 2px solid transparent;
+				border: 2px solid rgba(255, 255, 255, 0.1); /* Default low-contrast border for ties */
 				min-width: 150px;
 				transition: all 0.2s ease;
 			}
-			.score-box.leader {
-				background: rgba(255, 255, 255, 0.15);
-				border-color: #38bdf8;
+			
+background-color: #e0feec;
+		color: #0d9488;
+
+			/* Permanent Text Colors per Player */
+			.score-box.keenan-box .player-name,
+			.score-box.keenan-box .player-points {
+				color: #0d9488; /* Green text always */
+			}
+			.score-box.poppie-box .player-name,
+			.score-box.poppie-box .player-points {
+				color: #f472b6; /* Pink text always */
+			}
+
+			/* Conditional Container Highlights for the Leader */
+			.score-box.leader.keenan-box {
+				background: rgba(32, 233, 14, 0.15);
+				border-color: #0d9488; /* Light Green border */
 				transform: scale(1.05);
 			}
-			.player-name {
-				font-size: 1.1rem;
-				color: #cbd5e1;
-				margin-bottom: 0.5rem;
-				text-transform: uppercase;
-				font-weight: bold;
+			.score-box.leader.poppie-box {
+				background: rgba(236, 72, 153, 0.15);
+				border-color: #ec4899; /* Pink border */
+				transform: scale(1.05);
 			}
-			.player-points {
-				font-size: 3rem;
-				font-weight: 900;
-				color: #ffffff;
-				line-height: 1;
-			}
+
 			.vs-badge {
 				font-weight: bold;
 				color: #475569;
 				font-size: 1.2rem;
 			}
+
+			/* Dynamic Leader Text Bottom Alignment */
 			.leader-text {
-				color: #38bdf8;
 				font-weight: bold;
 				margin: 0;
 				font-size: 1.2rem;
+				transition: color 0.2s ease;
 			}
+			.text-keenan { color: #0d9488; }
+			.text-poppie { color: #f472b6; }
+			.text-tie { color: #cbd5e1; } /* Muted grey for drawing state */
+
 			@media (max-width: 600px) {
 				.scores-display { gap: 1rem; }
 				.score-box { min-width: 120px; padding: 1rem; }
@@ -207,17 +213,17 @@ if (keenanScore.totalPoints > poppieScore.totalPoints) {
 			<div class="leaderboard-banner">
 				<h2>Global Leaderboard</h2>
 				<div class="scores-display">
-					<div class={`score-box ${keenanScore.totalPoints >= poppieScore.totalPoints ? 'leader' : ''}`}>
+					<div class={`score-box keenan-box ${leader === 'keenan' ? 'leader' : ''}`}>
 						<span class="player-name">Keenan</span>
 						<span class="player-points">{keenanScore.totalPoints}</span>
 					</div>
 					<div class="vs-badge">VS</div>
-					<div class={`score-box ${poppieScore.totalPoints >= keenanScore.totalPoints ? 'leader' : ''}`}>
+					<div class={`score-box poppie-box ${leader === 'poppie' ? 'leader' : ''}`}>
 						<span class="player-name">Poppie</span>
 						<span class="player-points">{poppieScore.totalPoints}</span>
 					</div>
 				</div>
-				<p class="leader-text">{leaderText}</p>
+				<p class={`leader-text text-${leader}`}>{leaderText}</p>
 			</div>
 
 			<div class="stats-grid">

@@ -5,8 +5,8 @@ import Footer from '../../components/Footer.astro';
 import TeamCard from '../../components/worldcup/TeamCard.astro';
 import { getTeamsByOwner, getRankSummary } from '../../data/worldcup/teams';
 
-const keenanTeams = getTeamsByOwner('Keenan');
-const poppieTeams = getTeamsByOwner('Poppie');
+const keenanTeams = getTeamsByOwner('Keenan').sort((a, b) => a.worldRank - b.worldRank);
+const poppieTeams = getTeamsByOwner('Poppie').sort((a, b) => a.worldRank - b.worldRank);
 const keenanStats = getRankSummary('Keenan');
 const poppieStats = getRankSummary('Poppie');
 
@@ -83,34 +83,34 @@ const countTiers = (teams: any[], tier: number) => teams.filter(t => t.tier === 
 			
 			<div class="page-header">
 				<h1>The Sweepstake</h1>
-				<p>Allocation breakdown and structural fairness checks.</p>
+				<p>Allocation breakdown and balance statistics.</p>
 			</div>
 
 			<div class="methodology">
 				<h3>Methodology</h3>
-				<p>To ensure a balanced draw, the 48 teams were split into 6 competitive tiers based on their tournament rank. Teams were allocated randomly within those tiers, followed by a programmatic balancing pass to ensure every single group contains exactly two teams for each player. The result is a structurally perfect split.</p>
+				<p>To ensure a balanced draw, the 48 teams were split into 6 competitive tiers based on their tournament rank. Teams were allocated randomly within those tiers, followed by a programmatic balancing pass to ensure every single group contains exactly two teams for each player. The result is seemingly a near-perfect balance.</p>
 			</div>
 
-			<h2>Fairness Checks</h2>
+			<h2>Balance Statistics</h2>
 			<div class="fairness-panel">
 				<div class="fairness-card">
 					<h4>Total Teams</h4>
-					<p>Keenan: 24 | Poppie: 24</p>
+					<p>Keenan: 24 Poppie: 24</p>
 					<small>Perfect Split</small>
 				</div>
 				<div class="fairness-card">
-					<h4>Groups A-L</h4>
-					<p>2 per group each</p>
+					<h4>Group Split</h4>
+					<p>2 per group each A-L</p>
 					<small>Perfect Split</small>
 				</div>
 				<div class="fairness-card">
 					<h4>Draw Tiers</h4>
-					<p>4 from each tier</p>
+					<p>4 from each tier 1-6</p>
 					<small>Perfect Split</small>
 				</div>
 				<div class="fairness-card">
-					<h4>Tournament Rank Sum</h4>
-					<p>Keenan: 585 | Poppie: 591</p>
+					<h4>Rank Total</h4>
+					<p>Keenan: 585 Poppie: 591</p>
 					<small>Near-Perfect Split</small>
 				</div>
 			</div>
