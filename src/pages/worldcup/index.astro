@@ -3,9 +3,20 @@ import BaseHead from '../../components/BaseHead.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import { getRankSummary } from '../../data/worldcup/teams';
+import { calculatePlayerScore } from '../../data/worldcup/scoring';
 
 const keenanStats = getRankSummary('Keenan');
 const poppieStats = getRankSummary('Poppie');
+
+const keenanScore = calculatePlayerScore('Keenan');
+const poppieScore = calculatePlayerScore('Poppie');
+
+let leaderText = "It's a tie!";
+if (keenanScore.totalPoints > poppieScore.totalPoints) {
+	leaderText = "🏆 Keenan is in the lead!";
+} else if (poppieScore.totalPoints > keenanScore.totalPoints) {
+	leaderText = "🏆 Poppie is in the lead!";
+}
 ---
 
 <!doctype html>
@@ -115,6 +126,74 @@ const poppieStats = getRankSummary('Poppie');
 			.nav-card:hover:not(.disabled) .nav-desc {
 				color: #cbd5e1; /* Lightens description on hover */
 			}
+			/* Leaderboard Banner Styles */
+			.leaderboard-banner {
+				background: #0f172a;
+				color: white;
+				border-radius: 12px;
+				padding: 2rem;
+				margin-bottom: 3rem;
+				text-align: center;
+				box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+			}
+			.leaderboard-banner h2 {
+				margin-top: 0;
+				color: #e2e8f0;
+				font-size: 1.2rem;
+				text-transform: uppercase;
+				letter-spacing: 0.05em;
+			}
+			.scores-display {
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				gap: 2rem;
+				margin: 1.5rem 0;
+			}
+			.score-box {
+				display: flex;
+				flex-direction: column;
+				padding: 1rem 2rem;
+				border-radius: 8px;
+				background: rgba(255, 255, 255, 0.05);
+				border: 2px solid transparent;
+				min-width: 150px;
+				transition: all 0.2s ease;
+			}
+			.score-box.leader {
+				background: rgba(255, 255, 255, 0.15);
+				border-color: #38bdf8;
+				transform: scale(1.05);
+			}
+			.player-name {
+				font-size: 1.1rem;
+				color: #cbd5e1;
+				margin-bottom: 0.5rem;
+				text-transform: uppercase;
+				font-weight: bold;
+			}
+			.player-points {
+				font-size: 3rem;
+				font-weight: 900;
+				color: #ffffff;
+				line-height: 1;
+			}
+			.vs-badge {
+				font-weight: bold;
+				color: #475569;
+				font-size: 1.2rem;
+			}
+			.leader-text {
+				color: #38bdf8;
+				font-weight: bold;
+				margin: 0;
+				font-size: 1.2rem;
+			}
+			@media (max-width: 600px) {
+				.scores-display { gap: 1rem; }
+				.score-box { min-width: 120px; padding: 1rem; }
+				.player-points { font-size: 2.5rem; }
+			}
 		</style>
 	</head>
 	<body>
@@ -123,6 +202,22 @@ const poppieStats = getRankSummary('Poppie');
 			<div class="dashboard-header">
 				<h1>World Cup 2026 Sweepstake</h1>
 				<p>The official tracking hub for our tournament draft. Fair, balanced, and ready for kick-off.</p>
+			</div>
+
+			<div class="leaderboard-banner">
+				<h2>Global Leaderboard</h2>
+				<div class="scores-display">
+					<div class={`score-box ${keenanScore.totalPoints >= poppieScore.totalPoints ? 'leader' : ''}`}>
+						<span class="player-name">Keenan</span>
+						<span class="player-points">{keenanScore.totalPoints}</span>
+					</div>
+					<div class="vs-badge">VS</div>
+					<div class={`score-box ${poppieScore.totalPoints >= keenanScore.totalPoints ? 'leader' : ''}`}>
+						<span class="player-name">Poppie</span>
+						<span class="player-points">{poppieScore.totalPoints}</span>
+					</div>
+				</div>
+				<p class="leader-text">{leaderText}</p>
 			</div>
 
 			<div class="stats-grid">

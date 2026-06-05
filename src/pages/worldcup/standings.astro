@@ -84,15 +84,21 @@ const groups: Group[] = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 
 				text-transform: uppercase;
 				font-weight: bold;
 			}
-			.owner-keenan { background: #e0f2fe; color: #0369a1; }
+			.owner-keenan { background: #e0feec; color: #0d9488; }
 			.owner-poppie { background: #fce7f3; color: #be185d; }
 			
 			.pts-col { font-weight: bold; color: #0f172a; background: #f8fafc; }
 			
-			/* Top 2 qualification styling */
+			/* Qualification styling */
 			tr:nth-child(1) td.team-col,
 			tr:nth-child(2) td.team-col {
-				border-left: 3px solid #10b981; /* Green indicator for automatic qualification */
+				border-left: 4px solid #10b981; /* Green: Automatic Qualification */
+			}
+			tr:nth-child(3) td.team-col {
+				border-left: 4px solid #f59e0b; /* Orange: Possible Third-Place Qualification */
+			}
+			tr:nth-child(4) td.team-col {
+				border-left: 4px solid #ef4444; /* Red: Eliminated */
 			}
 		</style>
 	</head>
