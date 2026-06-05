@@ -1,0 +1,61 @@
+---
+// src/pages/worldcup/teams.astro
+import BaseHead from '../../components/BaseHead.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import TeamCard from '../../components/worldcup/TeamCard.astro';
+import { teams } from '../../data/worldcup/teams';
+
+// Sort all teams by their tournament rank (1 to 48) for the directory view
+const sortedTeams = [...teams].sort((a, b) => a.tournamentRank - b.tournamentRank);
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title="All Teams | World Cup Sweepstake" description="Directory of all 48 teams in the World Cup Sweepstake." />
+		<style>
+			.page-header {
+				text-align: center;
+				margin-bottom: 3rem;
+			}
+			.page-header h1 {
+				margin-bottom: 0.5rem;
+			}
+			.back-link {
+				display: inline-block;
+				margin-bottom: 2rem;
+				color: #0ea5e9;
+				text-decoration: none;
+				font-weight: 600;
+			}
+			.back-link:hover {
+				text-decoration: underline;
+			}
+			.teams-grid {
+				display: grid;
+				grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+				gap: 1.5rem;
+				margin-bottom: 4rem;
+			}
+		</style>
+	</head>
+	<body>
+		<Header />
+		<main>
+			<a href="/worldcup" class="back-link">&larr; Back to Hub</a>
+			
+			<div class="page-header">
+				<h1>All 48 Teams</h1>
+				<p>The complete tournament directory, sorted by initial rank.</p>
+			</div>
+
+			<div class="teams-grid">
+				{sortedTeams.map((team) => (
+					<TeamCard team={team} />
+				))}
+			</div>
+		</main>
+		<Footer />
+	</body>
+</html>
