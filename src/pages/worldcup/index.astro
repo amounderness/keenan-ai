@@ -89,6 +89,32 @@ const poppieStats = getRankSummary('Poppie');
 				cursor: not-allowed;
 				background: #f1f5f9;
 			}
+			.nav-card {
+				display: flex;
+				flex-direction: column; /* Changed to stack text */
+				align-items: center;
+				justify-content: center;
+				padding: 1.5rem;
+				background: #f8fafc;
+				border: 2px solid #cbd5e1;
+				border-radius: 8px;
+				text-decoration: none;
+				color: #334155;
+				transition: all 0.2s ease;
+				text-align: center;
+			}
+			.nav-title {
+				font-weight: bold;
+				font-size: 1.1rem;
+				margin-bottom: 0.25rem;
+			}
+			.nav-desc {
+				font-size: 0.85rem;
+				color: #64748b;
+			}
+			.nav-card:hover:not(.disabled) .nav-desc {
+				color: #cbd5e1; /* Lightens description on hover */
+			}
 		</style>
 	</head>
 	<body>
@@ -144,9 +170,26 @@ const poppieStats = getRankSummary('Poppie');
 			<div class="nav-section">
 				<h3>Tournament Hub</h3>
 				<div class="nav-grid">
-					<a href="/worldcup/groups" class="nav-card">View All Groups</a>
-					<div class="nav-card disabled" title="Coming in Phase 2">Fixtures (Phase 2)</div>
-					<div class="nav-card disabled" title="Coming in Phase 3">Standings (Phase 3)</div>
+					<a href="/worldcup/sweepstake" class="nav-card">
+						<span class="nav-title">The Sweepstake</span>
+						<span class="nav-desc">Allocation & Fairness</span>
+					</a>
+					<a href="/worldcup/groups" class="nav-card">
+						<span class="nav-title">Tournament Groups</span>
+						<span class="nav-desc">A-L Standings</span>
+					</a>
+					<a href="/worldcup/teams" class="nav-card">
+						<span class="nav-title">Team Directory</span>
+						<span class="nav-desc">All 48 Nations</span>
+					</a>
+					<div class="nav-card disabled" title="Coming in Phase 2">
+						<span class="nav-title">Fixtures & Results</span>
+						<span class="nav-desc">Phase 2</span>
+					</div>
+					<div class="nav-card disabled" title="Coming in Phase 3">
+						<span class="nav-title">Overall Standings</span>
+						<span class="nav-desc">Phase 3</span>
+					</div>
 				</div>
 			</div>
 		</main>
