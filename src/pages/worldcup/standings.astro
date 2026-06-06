@@ -5,7 +5,8 @@ import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import { getGroupStandings, getThirdPlaceStandings } from '../../data/worldcup/standings';
 import type { Group } from '../../data/worldcup/teams';
-import { teams } from '../../data/worldcup/teams'; // <-- ADD THIS LINE
+import { teams } from '../../data/worldcup/teams'; //
+import Country from '../../components/worldcup/Country.astro';
 
 const wildcardStandings = getThirdPlaceStandings();
 const groups: Group[] = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'];
@@ -148,7 +149,7 @@ const groups: Group[] = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 
 									{standings.map((team) => (
 										<tr>
 											<td class="team-col">
-												{team.name}
+												<Country code={team.id} name={team.name} />
 												<span class={`owner-tag owner-${team.owner.toLowerCase()}`}>{team.owner.charAt(0)}</span>
 											</td>
 											<td>{team.played}</td>
@@ -194,7 +195,7 @@ const groups: Group[] = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 
 							return (
 								<tr class={rowClass}>
 									<td class="team-col">
-										{team.name}
+										<Country code={team.id} name={team.name} />
 										<span class={`owner-tag owner-${team.owner.toLowerCase()}`}>{team.owner.charAt(0)}</span>
 									</td>
 									<td style="font-weight: bold; color: #64748b;">{originalTeam?.group}</td>

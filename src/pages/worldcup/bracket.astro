@@ -24,6 +24,23 @@ const stages = [
 	{ title: 'Semi-Finals', matches: sf },
 	{ title: 'Final', matches: final }
 ];
+
+const getFlag = (code: string) => {
+    // Basic mapping for common 2026 codes
+    const flagMap: Record<string, string> = {
+        'MEX': '🇲🇽', 'KOR': '🇰🇷', 'RSA': '🇿🇦', 'CZE': '🇨🇿', 'CAN': '🇨🇦', 
+        'BIH': '🇧🇦', 'QAT': '🇶🇦', 'SUI': '🇨🇭', 'BRA': '🇧🇷', 'MAR': '🇲🇦',
+        'HAI': '🇭🇹', 'SCO': '🏴󠁧󠁢󠁳󠁣󠁴󠁿', 'USA': '🇺🇸', 'PAR': '🇵🇾', 'AUS': '🇦🇺',
+        'TUR': '🇹🇷', 'GER': '🇩🇪', 'CUW': '🇨🇼', 'CIV': '🇨🇮', 'ECU': '🇪🇨',
+        'NED': '🇳🇱', 'JPN': '🇯🇵', 'SWE': '🇸🇪', 'TUN': '🇹🇳', 'BEL': '🇧🇪',
+        'EGY': '🇪🇬', 'IRN': '🇮🇷', 'NZL': '🇳🇿', 'ESP': '🇪🇸', 'CPV': '🇨🇻',
+        'KSA': '🇸🇦', 'URU': '🇺🇾', 'FRA': '🇫🇷', 'SEN': '🇸🇳', 'IRQ': '🇮🇶',
+        'NOR': '🇳🇴', 'ARG': '🇦🇷', 'ALG': '🇩🇿', 'AUT': '🇦🇹', 'JOR': '🇯🇴',
+        'POR': '🇵🇹', 'COD': '🇨🇩', 'UZB': '🇺🇿', 'COL': '🇨🇴', 'ENG': '🏴󠁧󠁢󠁥󠁮󠁧󠁿',
+        'CRO': '🇭🇷', 'GHA': '🇬🇭', 'PAN': '🇵🇦'
+    };
+    return flagMap[code] || '🏳️';
+};
 ---
 
 <!doctype html>
@@ -182,15 +199,19 @@ const stages = [
 									return (
 										<div class="match-wrapper">
 											<div class="bracket-match">
-												<div class="bracket-team">
-													<span class={home.isPlaceholder ? 'placeholder-text' : 'real-team'}>{home.name}</span>
-													{!home.isPlaceholder && <span class={`owner-dot dot-${home.owner?.toLowerCase()}`} title={home.owner}></span>}
-												</div>
-												<div class="bracket-team">
-													<span class={away.isPlaceholder ? 'placeholder-text' : 'real-team'}>{away.name}</span>
-													{!away.isPlaceholder && <span class={`owner-dot dot-${away.owner?.toLowerCase()}`} title={away.owner}></span>}
-												</div>
-											</div>
+                                                <div class="bracket-team">
+                                                    <span class={home.isPlaceholder ? 'placeholder-text' : 'real-team'}>
+                                                        {!home.isPlaceholder && getFlag(match.homeTeamCode)} {home.name}
+                                                    </span>
+                                                    {!home.isPlaceholder && <span class={`owner-dot dot-${home.owner?.toLowerCase()}`} title={home.owner}></span>}
+                                                </div>
+                                                <div class="bracket-team">
+                                                    <span class={away.isPlaceholder ? 'placeholder-text' : 'real-team'}>
+                                                        {!away.isPlaceholder && getFlag(match.awayTeamCode)} {away.name}
+                                                    </span>
+                                                    {!away.isPlaceholder && <span class={`owner-dot dot-${away.owner?.toLowerCase()}`} title={away.owner}></span>}
+                                                </div>
+                                            </div>
 										</div>
 									)
 								})}

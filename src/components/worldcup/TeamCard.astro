@@ -1,6 +1,7 @@
 ---
 // src/components/worldcup/TeamCard.astro
 import type { Team } from '../../data/worldcup/teams';
+import Country from './Country.astro';
 
 interface Props {
 	team: Team;
@@ -12,9 +13,11 @@ const { team } = Astro.props;
 const badgeClass = team.owner === 'Keenan' ? 'badge-keenan' : 'badge-poppie';
 ---
 
-<div class="team-card">
-	<div class="team-header">
-		<h4 class="team-name">{team.name} <span class="team-code">({team.id})</span></h4>
+<div class="team-header">
+		<h4 class="team-name">
+			<Country code={team.id} name={team.name} /> 
+			<span class="team-code">({team.id})</span>
+		</h4>
 		<span class={`owner-badge ${badgeClass}`}>{team.owner}</span>
 	</div>
 	

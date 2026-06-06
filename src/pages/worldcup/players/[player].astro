@@ -8,6 +8,7 @@ import { teams, getRankSummary } from '../../../data/worldcup/teams';
 import { matches } from '../../../data/worldcup/matches';
 import { calculatePlayerScore } from '../../../data/worldcup/scoring';
 import type { Player } from '../../../data/worldcup/teams';
+import Country from '../../../components/worldcup/Country.astro';
 
 // 1. Tell Astro which routes to generate at build time
 export function getStaticPaths() {
@@ -246,15 +247,15 @@ const formatTime = (dateString: string) => {
 								
 								<div class="match-row-teams">
 									<div class="team-with-owner">
-										<span>{homeTeam?.name || match.homeTeamCode}</span>
+										<Country code={match.homeTeamCode} name={homeTeam?.name || match.homeTeamCode} />
 										{homeTeam && <span class={`owner-tag owner-${homeTeam.owner.toLowerCase()}`}>{homeTeam.owner.charAt(0)}</span>}
 									</div>
-									
+	
 									<span class="match-vs">vs</span>
-									
+	
 									<div class="team-with-owner">
 										{awayTeam && <span class={`owner-tag owner-${awayTeam.owner.toLowerCase()}`}>{awayTeam.owner.charAt(0)}</span>}
-										<span>{awayTeam?.name || match.awayTeamCode}</span>
+										<Country code={match.awayTeamCode} name={awayTeam?.name || match.awayTeamCode} reverse={true} />
 									</div>
 								</div>
 

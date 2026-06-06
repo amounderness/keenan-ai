@@ -1,0 +1,45 @@
+---
+// src/components/worldcup/Country.astro
+export interface Props {
+	code: string;
+	name: string;
+	reverse?: boolean;
+}
+
+const { code, name, reverse = false } = Astro.props;
+
+const getFlag = (c: string) => {
+    const flagMap: Record<string, string> = {
+        'MEX': '🇲🇽', 'KOR': '🇰🇷', 'RSA': '🇿🇦', 'CZE': '🇨🇿', 'CAN': '🇨🇦', 
+        'BIH': '🇧🇦', 'QAT': '🇶🇦', 'SUI': '🇨🇭', 'BRA': '🇧🇷', 'MAR': '🇲🇦',
+        'HAI': '🇭🇹', 'SCO': '🏴󠁧󠁢󠁳󠁣󠁴󠁿', 'USA': '🇺🇸', 'PAR': '🇵🇾', 'AUS': '🇦🇺',
+        'TUR': '🇹🇷', 'GER': '🇩🇪', 'CUW': '🇨🇼', 'CIV': '🇨🇮', 'ECU': '🇪🇨',
+        'NED': '🇳🇱', 'JPN': '🇯🇵', 'SWE': '🇸🇪', 'TUN': '🇹🇳', 'BEL': '🇧🇪',
+        'EGY': '🇪🇬', 'IRN': '🇮🇷', 'NZL': '🇳🇿', 'ESP': '🇪🇸', 'CPV': '🇨🇻',
+        'KSA': '🇸🇦', 'URU': '🇺🇾', 'FRA': '🇫🇷', 'SEN': '🇸🇳', 'IRQ': '🇮🇶',
+        'NOR': '🇳🇴', 'ARG': '🇦🇷', 'ALG': '🇩🇿', 'AUT': '🇦🇹', 'JOR': '🇯🇴',
+        'POR': '🇵🇹', 'COD': '🇨🇩', 'UZB': '🇺🇿', 'COL': '🇨🇴', 'ENG': '🏴󠁧󠁢󠁥󠁮󠁧󠁿',
+        'CRO': '🇭🇷', 'GHA': '🇬🇭', 'PAN': '🇵🇦'
+    };
+    return flagMap[c] || '🏳️'; // Shows a white flag if the code isn't found
+};
+---
+<span class={`country-display ${reverse ? 'reverse' : ''}`}>
+	<span class="flag">{getFlag(code)}</span>
+	<span class="name">{name}</span>
+</span>
+
+<style>
+	.country-display {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.4rem;
+	}
+	.country-display.reverse {
+		flex-direction: row-reverse;
+	}
+	.flag {
+		font-size: 1.2em; /* Makes the emojis slightly larger than the text */
+		line-height: 1;
+	}
+</style>
