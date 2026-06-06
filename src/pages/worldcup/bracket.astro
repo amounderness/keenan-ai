@@ -6,14 +6,11 @@ import Footer from '../../components/Footer.astro';
 import { matches } from '../../data/worldcup/matches';
 import { teams } from '../../data/worldcup/teams';
 
-// Helper to grab real team data if the code matches a real country (e.g., 'MEX')
-// Otherwise, it just returns the placeholder string (e.g., '1A')
 const resolveTeam = (code: string) => {
 	const team = teams.find(t => t.id === code);
 	return team ? { name: team.name, owner: team.owner, isPlaceholder: false } : { name: code, owner: null, isPlaceholder: true };
 };
 
-// Filter matches into columns
 const r32 = matches.filter(m => m.stage === 'round_of_32');
 const r16 = matches.filter(m => m.stage === 'round_of_16');
 const qf = matches.filter(m => m.stage === 'quarter_final');
@@ -52,16 +49,15 @@ const stages = [
 
 			.bracket-container {
 				display: flex;
-				gap: 3rem;
-				min-width: 1200px; /* Forces scrolling on small screens */
+				min-width: 1400px; /* Provides ample room for 5 stages */
 			}
 
+			/* Columns & Wrappers */
 			.bracket-column {
 				display: flex;
 				flex-direction: column;
-				justify-content: space-around;
 				flex: 1;
-				gap: 1.5rem;
+				padding: 0 1.5rem; /* This padding creates the horizontal gap between stages */
 			}
 
 			.column-title {
@@ -69,9 +65,25 @@ const stages = [
 				font-size: 0.9rem;
 				text-transform: uppercase;
 				color: #64748b;
-				margin-bottom: 1rem;
+				margin-bottom: 2rem;
 				font-weight: 800;
 				letter-spacing: 0.05em;
+				height: 20px;
+			}
+
+			.column-matches {
+				display: flex;
+				flex-direction: column;
+				flex: 1;
+			}
+
+			/* This wrapper mathematically forces perfect vertical alignment */
+			.match-wrapper {
+				display: flex;
+				flex: 1;
+				align-items: center;
+				position: relative;
+				padding: 0.5rem 0; 
 			}
 
 			/* Match Card UI */
@@ -79,20 +91,10 @@ const stages = [
 				background: #ffffff;
 				border: 2px solid #cbd5e1;
 				border-radius: 8px;
-				min-width: 180px;
+				width: 100%;
 				position: relative;
 				box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-			}
-
-			/* Visual connectors between matches */
-			.bracket-column:not(:last-child) .bracket-match::after {
-				content: '';
-				position: absolute;
-				right: -1.5rem;
-				top: 50%;
-				width: 1.5rem;
-				height: 2px;
-				background-color: #cbd5e1;
+				z-index: 2; /* Keeps the card above the connecting lines */
 			}
 
 			.bracket-team {
@@ -103,19 +105,58 @@ const stages = [
 				justify-content: space-between;
 				align-items: center;
 			}
-			.bracket-team:first-child { border-bottom: 1px solid #e2e8f0; }
+			.bracket-team:first-child { border-bottom: 1px solid #f1f5f9; }
 
-			.placeholder-text {
-				color: #94a3b8;
-				font-weight: 600;
-			}
+			.placeholder-text { color: #94a3b8; font-weight: 600; font-size: 0.8rem; }
 			.real-team { color: #0f172a; }
 
 			.owner-dot {
 				width: 10px; height: 10px; border-radius: 50%; display: inline-block;
 			}
-			.dot-keenan { background-color: #0d9488; } /* Keenan Green */
-			.dot-poppie { background-color: #ec4899; } /* Poppie Pink */
+			.dot-keenan { background-color: #0d9488; }
+			.dot-poppie { background-color: #ec4899; }
+
+			/* --- The Connecting Lines --- */
+
+			/* Top Match Elbow (Goes Right, then Down) */
+			.bracket-column:not(:last-child) .match-wrapper:nth-child(odd)::after {
+				content: '';
+				position: absolute;
+				top: 50%;
+				right: -1.5rem; /* Reaches exactly halfway into the column padding */
+				width: 1.5rem;
+				height: 50%;
+				border-top: 2px solid #cbd5e1;
+				border-right: 2px solid #cbd5e1;
+				border-top-right-radius: 4px;
+				z-index: 1;
+			}
+
+			/* Bottom Match Elbow (Goes Right, then Up) */
+			.bracket-column:not(:last-child) .match-wrapper:nth-child(even)::after {
+				content: '';
+				position: absolute;
+				bottom: 50%;
+				right: -1.5rem;
+				width: 1.5rem;
+				height: 50%;
+				border-bottom: 2px solid #cbd5e1;
+				border-right: 2px solid #cbd5e1;
+				border-bottom-right-radius: 4px;
+				z-index: 1;
+			}
+
+			/* Straight Line feeding into the Next Match */
+			.bracket-column:not(:first-child) .match-wrapper::before {
+				content: '';
+				position: absolute;
+				top: 50%;
+				left: -1.5rem;
+				width: 1.5rem;
+				height: 2px;
+				background-color: #cbd5e1;
+				z-index: 1;
+			}
 		</style>
 	</head>
 	<body>
@@ -133,23 +174,27 @@ const stages = [
 					{stages.map(stage => (
 						<div class="bracket-column">
 							<div class="column-title">{stage.title}</div>
-							{stage.matches.map(match => {
-								const home = resolveTeam(match.homeTeamCode);
-								const away = resolveTeam(match.awayTeamCode);
-								
-								return (
-									<div class="bracket-match">
-										<div class="bracket-team">
-											<span class={home.isPlaceholder ? 'placeholder-text' : 'real-team'}>{home.name}</span>
-											{!home.isPlaceholder && <span class={`owner-dot dot-${home.owner?.toLowerCase()}`} title={home.owner}></span>}
+							<div class="column-matches">
+								{stage.matches.map(match => {
+									const home = resolveTeam(match.homeTeamCode);
+									const away = resolveTeam(match.awayTeamCode);
+									
+									return (
+										<div class="match-wrapper">
+											<div class="bracket-match">
+												<div class="bracket-team">
+													<span class={home.isPlaceholder ? 'placeholder-text' : 'real-team'}>{home.name}</span>
+													{!home.isPlaceholder && <span class={`owner-dot dot-${home.owner?.toLowerCase()}`} title={home.owner}></span>}
+												</div>
+												<div class="bracket-team">
+													<span class={away.isPlaceholder ? 'placeholder-text' : 'real-team'}>{away.name}</span>
+													{!away.isPlaceholder && <span class={`owner-dot dot-${away.owner?.toLowerCase()}`} title={away.owner}></span>}
+												</div>
+											</div>
 										</div>
-										<div class="bracket-team">
-											<span class={away.isPlaceholder ? 'placeholder-text' : 'real-team'}>{away.name}</span>
-											{!away.isPlaceholder && <span class={`owner-dot dot-${away.owner?.toLowerCase()}`} title={away.owner}></span>}
-										</div>
-									</div>
-								)
-							})}
+									)
+								})}
+							</div>
 						</div>
 					))}
 				</div>

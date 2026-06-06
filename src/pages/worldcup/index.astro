@@ -139,6 +139,41 @@ const poppieActive = teams.filter(t => t.owner === 'Poppie' && t.status !== 'eli
 				text-transform: uppercase;
 				letter-spacing: 0.05em;
 			}
+
+			/* --- NEW COUNTDOWN STYLES --- */
+			.countdown-wrapper {
+				display: flex;
+				justify-content: center;
+				gap: 1rem;
+				margin: 1.5rem 0 2.5rem 0;
+				padding-bottom: 2rem;
+				border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+			}
+			.time-box {
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				background: rgba(0, 0, 0, 0.3);
+				padding: 0.75rem 1rem;
+				border-radius: 8px;
+				border: 1px solid rgba(255, 255, 255, 0.05);
+				min-width: 70px;
+			}
+			.time-box span {
+				font-size: 1.8rem;
+				font-weight: 800;
+				color: #f8fafc;
+				line-height: 1;
+				font-variant-numeric: tabular-nums;
+			}
+			.time-box small {
+				font-size: 0.7rem;
+				color: #94a3b8;
+				text-transform: uppercase;
+				letter-spacing: 0.05em;
+				margin-top: 0.4rem;
+			}
+
 			.scores-display {
 				display: flex;
 				justify-content: center;
@@ -157,7 +192,6 @@ const poppieActive = teams.filter(t => t.owner === 'Poppie' && t.status !== 'eli
 				transition: all 0.2s ease;
 			}
 			
-			/* Restored Player Text Styles */
 			.player-name {
 				font-size: 1.1rem;
 				margin-bottom: 0.5rem;
@@ -170,7 +204,6 @@ const poppieActive = teams.filter(t => t.owner === 'Poppie' && t.status !== 'eli
 				line-height: 1;
 			}
 
-			/* Survival Strip (Now styled for light background) */
 			.survival-strip {
 				display: flex;
 				justify-content: center;
@@ -196,7 +229,6 @@ const poppieActive = teams.filter(t => t.owner === 'Poppie' && t.status !== 'eli
 				font-size: 1.05rem;
 			}
 
-			/* Permanent Text Colors per Player */
 			.score-box.keenan-box .player-name,
 			.score-box.keenan-box .player-points {
 				color: #0d9488;
@@ -206,7 +238,6 @@ const poppieActive = teams.filter(t => t.owner === 'Poppie' && t.status !== 'eli
 				color: #f472b6;
 			}
 
-			/* Conditional Container Highlights for the Leader */
 			.score-box.leader.keenan-box {
 				background: rgba(13, 148, 136, 0.15);
 				border-color: #0d9488;
@@ -224,7 +255,6 @@ const poppieActive = teams.filter(t => t.owner === 'Poppie' && t.status !== 'eli
 				font-size: 1.2rem;
 			}
 
-			/* Dynamic Leader Text Bottom Alignment */
 			.leader-text {
 				font-weight: bold;
 				margin: 0;
@@ -239,6 +269,9 @@ const poppieActive = teams.filter(t => t.owner === 'Poppie' && t.status !== 'eli
 				.scores-display { gap: 1rem; }
 				.score-box { min-width: 120px; padding: 1rem; }
 				.player-points { font-size: 2.5rem; }
+				.countdown-wrapper { gap: 0.5rem; }
+				.time-box { min-width: 60px; padding: 0.5rem; }
+				.time-box span { font-size: 1.4rem; }
 			}
 		</style>
 	</head>
@@ -247,11 +280,20 @@ const poppieActive = teams.filter(t => t.owner === 'Poppie' && t.status !== 'eli
 		<main>
 			<div class="dashboard-header">
 				<h1>World Cup 2026 Sweepstake</h1>
-				<p>The official tracking hub for our tournament draft. Fair, balanced, and ready for kick-off.</p>
+				<p>The official hub for our competition. Explore the teams, leaderboards and statistics.</p>
 			</div>
 
 			<div class="leaderboard-banner">
-				<h2>Global Leaderboard</h2>
+				<h2>Tournament Kick-off</h2>
+				
+				<div class="countdown-wrapper">
+					<div class="time-box"><span id="cd-days">00</span><small>Days</small></div>
+					<div class="time-box"><span id="cd-hours">00</span><small>Hours</small></div>
+					<div class="time-box"><span id="cd-mins">00</span><small>Mins</small></div>
+					<div class="time-box"><span id="cd-secs">00</span><small>Secs</small></div>
+				</div>
+
+				<h2 style="margin-top: 2rem;">Global Leaderboard</h2>
 				<div class="scores-display">
 					<div class={`score-box keenan-box ${leader === 'keenan' ? 'leader' : ''}`}>
 						<span class="player-name">Keenan</span>
@@ -324,7 +366,7 @@ const poppieActive = teams.filter(t => t.owner === 'Poppie' && t.status !== 'eli
 				<div class="nav-grid">
 					<a href="/worldcup/sweepstake" class="nav-card">
 						<span class="nav-title">The Sweepstake</span>
-						<span class="nav-desc">Allocation & Fairness</span>
+						<span class="nav-desc">How Does It Work?</span>
 					</a>
 					<a href="/worldcup/players/keenan" class="nav-card">
 						<span class="nav-title">Keenan's Hub</span>
@@ -347,16 +389,53 @@ const poppieActive = teams.filter(t => t.owner === 'Poppie' && t.status !== 'eli
 						<span class="nav-desc">Match Tracker</span>
 					</a>
 					<a href="/worldcup/standings" class="nav-card">
-						<span class="nav-title">Overall Standings</span>
-						<span class="nav-desc">Group Tables</span>
+						<span class="nav-title">Group Stage</span>
+						<span class="nav-desc">Groups & Third Place</span>
 					</a>
 					<a href="/worldcup/bracket" class="nav-card">
-						<span class="nav-title">Bracket & Paths</span>
+						<span class="nav-title">The KO Rounds</span>
 						<span class="nav-desc">Knockout Flowchart</span>
 					</a>
 				</div>
 			</div>
 		</main>
 		<Footer />
+		<script>
+				// Set exact kick-off to 20:00 BST (19:00 UTC) on 11 June 2026
+				const targetDate = new Date('2026-06-11T19:00:00Z').getTime();
+
+				const daysEl = document.getElementById('cd-days');
+				const hoursEl = document.getElementById('cd-hours');
+				const minsEl = document.getElementById('cd-mins');
+				const secsEl = document.getElementById('cd-secs');
+
+				function updateCountdown() {
+					const now = new Date().getTime();
+					const distance = targetDate - now;
+
+					// If tournament has started, zero out the timer
+					if (distance < 0) {
+						if (daysEl) daysEl.innerText = "00";
+						if (hoursEl) hoursEl.innerText = "00";
+						if (minsEl) minsEl.innerText = "00";
+						if (secsEl) secsEl.innerText = "00";
+						return;
+					}
+
+					const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+					const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+					const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+					const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+					if (daysEl) daysEl.innerText = days.toString().padStart(2, '0');
+					if (hoursEl) hoursEl.innerText = hours.toString().padStart(2, '0');
+					if (minsEl) minsEl.innerText = minutes.toString().padStart(2, '0');
+					if (secsEl) secsEl.innerText = seconds.toString().padStart(2, '0');
+				}
+
+				// Update every second
+				setInterval(updateCountdown, 1000);
+				updateCountdown(); // Initial call to avoid flash of zeros
+		</script>
 	</body>
 </html>
