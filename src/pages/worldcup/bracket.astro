@@ -1,0 +1,160 @@
+---
+// src/pages/worldcup/bracket.astro
+import BaseHead from '../../components/BaseHead.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import { matches } from '../../data/worldcup/matches';
+import { teams } from '../../data/worldcup/teams';
+
+// Helper to grab real team data if the code matches a real country (e.g., 'MEX')
+// Otherwise, it just returns the placeholder string (e.g., '1A')
+const resolveTeam = (code: string) => {
+	const team = teams.find(t => t.id === code);
+	return team ? { name: team.name, owner: team.owner, isPlaceholder: false } : { name: code, owner: null, isPlaceholder: true };
+};
+
+// Filter matches into columns
+const r32 = matches.filter(m => m.stage === 'round_of_32');
+const r16 = matches.filter(m => m.stage === 'round_of_16');
+const qf = matches.filter(m => m.stage === 'quarter_final');
+const sf = matches.filter(m => m.stage === 'semi_final');
+const final = matches.filter(m => m.stage === 'final');
+
+const stages = [
+	{ title: 'Round of 32', matches: r32 },
+	{ title: 'Round of 16', matches: r16 },
+	{ title: 'Quarter-Finals', matches: qf },
+	{ title: 'Semi-Finals', matches: sf },
+	{ title: 'Final', matches: final }
+];
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title="Tournament Bracket | World Cup Sweepstake" description="Interactive bracket and knockout paths." />
+		<style>
+			.page-header { text-align: center; margin-bottom: 2rem; }
+			.back-link { display: inline-block; margin-bottom: 2rem; color: #0ea5e9; text-decoration: none; font-weight: 600; }
+			.back-link:hover { text-decoration: underline; }
+			
+			/* Bracket Scrolling Container */
+			.bracket-wrapper {
+				width: 100%;
+				overflow-x: auto;
+				padding: 2rem 1rem;
+				background: #f8fafc;
+				border: 1px solid #e2e8f0;
+				border-radius: 12px;
+				margin-bottom: 4rem;
+				box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.03);
+			}
+
+			.bracket-container {
+				display: flex;
+				gap: 3rem;
+				min-width: 1200px; /* Forces scrolling on small screens */
+			}
+
+			.bracket-column {
+				display: flex;
+				flex-direction: column;
+				justify-content: space-around;
+				flex: 1;
+				gap: 1.5rem;
+			}
+
+			.column-title {
+				text-align: center;
+				font-size: 0.9rem;
+				text-transform: uppercase;
+				color: #64748b;
+				margin-bottom: 1rem;
+				font-weight: 800;
+				letter-spacing: 0.05em;
+			}
+
+			/* Match Card UI */
+			.bracket-match {
+				background: #ffffff;
+				border: 2px solid #cbd5e1;
+				border-radius: 8px;
+				min-width: 180px;
+				position: relative;
+				box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+			}
+
+			/* Visual connectors between matches */
+			.bracket-column:not(:last-child) .bracket-match::after {
+				content: '';
+				position: absolute;
+				right: -1.5rem;
+				top: 50%;
+				width: 1.5rem;
+				height: 2px;
+				background-color: #cbd5e1;
+			}
+
+			.bracket-team {
+				padding: 0.5rem 0.75rem;
+				font-size: 0.9rem;
+				font-weight: bold;
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+			}
+			.bracket-team:first-child { border-bottom: 1px solid #e2e8f0; }
+
+			.placeholder-text {
+				color: #94a3b8;
+				font-weight: 600;
+			}
+			.real-team { color: #0f172a; }
+
+			.owner-dot {
+				width: 10px; height: 10px; border-radius: 50%; display: inline-block;
+			}
+			.dot-keenan { background-color: #0d9488; } /* Keenan Green */
+			.dot-poppie { background-color: #ec4899; } /* Poppie Pink */
+		</style>
+	</head>
+	<body>
+		<Header />
+		<main>
+			<a href="/worldcup" class="back-link">&larr; Back to Hub</a>
+			
+			<div class="page-header">
+				<h1>Tournament Bracket</h1>
+				<p>The path to the final. Scroll horizontally to view all stages.</p>
+			</div>
+
+			<div class="bracket-wrapper">
+				<div class="bracket-container">
+					{stages.map(stage => (
+						<div class="bracket-column">
+							<div class="column-title">{stage.title}</div>
+							{stage.matches.map(match => {
+								const home = resolveTeam(match.homeTeamCode);
+								const away = resolveTeam(match.awayTeamCode);
+								
+								return (
+									<div class="bracket-match">
+										<div class="bracket-team">
+											<span class={home.isPlaceholder ? 'placeholder-text' : 'real-team'}>{home.name}</span>
+											{!home.isPlaceholder && <span class={`owner-dot dot-${home.owner?.toLowerCase()}`} title={home.owner}></span>}
+										</div>
+										<div class="bracket-team">
+											<span class={away.isPlaceholder ? 'placeholder-text' : 'real-team'}>{away.name}</span>
+											{!away.isPlaceholder && <span class={`owner-dot dot-${away.owner?.toLowerCase()}`} title={away.owner}></span>}
+										</div>
+									</div>
+								)
+							})}
+						</div>
+					))}
+				</div>
+			</div>
+		</main>
+		<Footer />
+	</body>
+</html>
