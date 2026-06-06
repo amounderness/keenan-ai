@@ -6,8 +6,8 @@ import Footer from '../../../components/Footer.astro';
 import TeamCard from '../../../components/worldcup/TeamCard.astro';
 import { teams, getRankSummary } from '../../../data/worldcup/teams';
 import { matches } from '../../../data/worldcup/matches';
-import type { Player } from '../../../data/worldcup/teams';
 import { calculatePlayerScore } from '../../../data/worldcup/scoring';
+import type { Player } from '../../../data/worldcup/teams';
 
 // 1. Tell Astro which routes to generate at build time
 export function getStaticPaths() {
@@ -26,8 +26,10 @@ const myTeams = teams
 	.filter(t => t.owner === playerName)
 	.sort((a, b) => a.tournamentRank - b.tournamentRank);
 const myTeamCodes = myTeams.map(t => t.id);
-const myStats = getRankSummary(playerName);
 const scoreData = calculatePlayerScore(playerName);
+
+// Count active teams
+const activeTeamsCount = myTeams.filter(t => t.status !== 'eliminated').length;
 
 // 4. Filter matches involving this player's teams
 const myMatches = matches.filter(m => 
@@ -79,15 +81,28 @@ const formatTime = (dateString: string) => {
 			.back-link { display: inline-block; margin-bottom: 2rem; color: #0ea5e9; text-decoration: none; font-weight: 600; }
 			.back-link:hover { text-decoration: underline; }
 			
-			.dashboard-grid {
+			/* Top Stats Grid */
+			.top-stats-grid {
 				display: grid;
-				grid-template-columns: 1fr 300px;
+				grid-template-columns: 1fr 1fr;
 				gap: 2rem;
-				margin-bottom: 4rem;
+				margin-bottom: 2rem;
 			}
-			@media (max-width: 800px) {
-				.dashboard-grid { grid-template-columns: 1fr; }
+			@media (max-width: 600px) {
+				.top-stats-grid { grid-template-columns: 1fr; gap: 1rem; }
 			}
+
+			.score-card {
+				background: #ffffff;
+				border: 1px solid #e2e8f0;
+				border-radius: 12px;
+				padding: 1.5rem;
+				text-align: center;
+				box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+			}
+			.score-card h3 { margin-top: 0; font-size: 1.2rem; color: #475569; }
+			.huge-score { font-size: 3.5rem; font-weight: bold; color: #0f172a; line-height: 1; margin: 1rem 0; }
+			.score-label { color: #64748b; font-size: 0.9rem; }
 
 			/* Up Next Section */
 			.up-next-section {
@@ -95,6 +110,7 @@ const formatTime = (dateString: string) => {
 				border: 2px solid #e2e8f0;
 				border-radius: 12px;
 				padding: 2rem;
+				margin-bottom: 4rem;
 			}
 			.up-next-header {
 				display: flex;
@@ -113,49 +129,64 @@ const formatTime = (dateString: string) => {
 				font-size: 0.9rem;
 				font-weight: bold;
 			}
-			.mini-match-card {
+
+			/* Match Row UI */
+			.match-row {
 				background: white;
 				border: 1px solid #cbd5e1;
 				border-radius: 8px;
-				padding: 1rem;
-				margin-bottom: 1rem;
+				padding: 1rem 1.5rem;
+				margin-bottom: 0.75rem;
 				display: flex;
 				justify-content: space-between;
 				align-items: center;
+				box-shadow: 0 1px 2px rgba(0,0,0,0.05);
 			}
-			.mini-match-time { font-weight: bold; color: #3b82f6; min-width: 65px; white-space: nowrap; flex-shrink: 0; }
-			.mini-match-teams { flex: 1; text-align: center; font-size: 1.1rem; font-weight: 600; }
-			.mini-match-group { width: 60px; text-align: right; color: #64748b; font-size: 0.85rem; text-transform: uppercase; }
-			
-			.head-to-head-alert {
-				background: #fef2f2;
-				color: #991b1b;
-				border: 1px solid #fecaca;
-				padding: 0.5rem;
-				border-radius: 6px;
-				text-align: center;
-				font-size: 0.85rem;
-				font-weight: bold;
-				margin-top: 0.5rem;
+			.match-row-time { 
+				font-weight: bold; 
+				color: #3b82f6; 
+				width: 80px; 
+				white-space: nowrap; 
+				flex-shrink: 0; 
+			}
+			.match-row-teams { 
+				flex: 1; 
+				display: flex; 
+				justify-content: center;
+				align-items: center;
+				gap: 1rem;
+				font-size: 1.1rem; 
+				font-weight: 600; 
+			}
+			.team-with-owner {
+				display: flex;
+				align-items: center;
+				gap: 0.5rem;
+			}
+			.match-vs {
+				color: #94a3b8;
+				font-size: 0.9rem;
+				font-weight: normal;
+				padding: 0 0.5rem;
+			}
+			.match-row-group { 
+				width: 80px; 
+				text-align: right; 
+				color: #64748b; 
+				font-size: 0.85rem; 
+				text-transform: uppercase; 
 			}
 
-			/* Sidebar Stats */
-			.stats-sidebar {
-				display: flex;
-				flex-direction: column;
-				gap: 1.5rem;
+			/* Owner Tags */
+			.owner-tag {
+				font-size: 0.65rem;
+				padding: 0.15rem 0.4rem;
+				border-radius: 4px;
+				text-transform: uppercase;
+				font-weight: bold;
 			}
-			.score-card {
-				background: #ffffff;
-				border: 1px solid #e2e8f0;
-				border-radius: 12px;
-				padding: 1.5rem;
-				text-align: center;
-				box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-			}
-			.score-card h3 { margin-top: 0; font-size: 1.2rem; color: #475569; }
-			.huge-score { font-size: 3.5rem; font-weight: 900; color: #0f172a; line-height: 1; margin: 1rem 0; }
-			.score-label { color: #64748b; font-size: 0.9rem; }
+			.owner-keenan { background: #e0feec; color: #0d9488; }
+			.owner-poppie { background: #fce7f3; color: #be185d; }
 			
 			/* My Teams Grid */
 			.my-teams-header { margin-top: 3rem; margin-bottom: 1.5rem; border-bottom: 2px solid #e2e8f0; padding-bottom: 0.5rem; }
@@ -163,6 +194,13 @@ const formatTime = (dateString: string) => {
 				display: grid;
 				grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
 				gap: 1.5rem;
+			}
+
+			@media (max-width: 700px) {
+				.match-row { flex-direction: column; gap: 0.5rem; text-align: center; }
+				.match-row-time, .match-row-group { width: auto; text-align: center; }
+				.match-row-teams { flex-direction: column; gap: 0.25rem; }
+				.match-vs { display: none; }
 			}
 		</style>
 	</head>
@@ -173,55 +211,63 @@ const formatTime = (dateString: string) => {
 			
 			<div class="page-header">
 				<h1>{playerName}'s Dashboard</h1>
-				<p>Track your teams.</p>
+				<p>Your sweepstake command centre.</p>
 			</div>
 
-			<div class="dashboard-grid">
-				<!-- Left Column: Up Next -->
-				<div class="up-next-section">
-					<div class="up-next-header">
-						<h2>Up Next</h2>
-						<span class="days-away">{daysAwayText}</span>
-					</div>
+			<div class="top-stats-grid">
+				<div class="score-card">
+					<h3>Total Points</h3>
+					<div class="huge-score">{scoreData.totalPoints}</div>
+					<div class="score-label">Across all 24 teams</div>
+				</div>
+				<div class="score-card">
+					<h3>Teams Remaining</h3>
+					<div class="huge-score">{activeTeamsCount}</div>
+					<div class="score-label">Active in Tournament</div>
+				</div>
+			</div>
 
-					{nextMatchDayMatches.length === 0 ? (
-						<p>No upcoming matches scheduled.</p>
-					) : (
-						nextMatchDayMatches.map(match => {
-							const homeTeam = teams.find(t => t.id === match.homeTeamCode);
-							const awayTeam = teams.find(t => t.id === match.awayTeamCode);
-							const isHeadToHead = homeTeam?.owner !== awayTeam?.owner;
+			<div class="up-next-section">
+				<div class="up-next-header">
+					<h2>Up Next</h2>
+					<span class="days-away">{daysAwayText}</span>
+				</div>
 
-							return (
-								<div class="mini-match-card">
-									<div class="mini-match-time">{formatTime(match.kickoffUtc)}</div>
-									<div class="mini-match-teams">
-										{homeTeam?.name || match.homeTeamCode} vs {awayTeam?.name || match.awayTeamCode}
-										{isHeadToHead && <div class="head-to-head-alert">⚠️ Head-to-Head Clash!</div>}
+				{nextMatchDayMatches.length === 0 ? (
+					<p>No upcoming matches scheduled.</p>
+				) : (
+					nextMatchDayMatches.map(match => {
+						const homeTeam = teams.find(t => t.id === match.homeTeamCode);
+						const awayTeam = teams.find(t => t.id === match.awayTeamCode);
+
+						return (
+							<div class="match-row">
+								<div class="match-row-time">{formatTime(match.kickoffUtc)}</div>
+								
+								<div class="match-row-teams">
+									<div class="team-with-owner">
+										<span>{homeTeam?.name || match.homeTeamCode}</span>
+										{homeTeam && <span class={`owner-tag owner-${homeTeam.owner.toLowerCase()}`}>{homeTeam.owner.charAt(0)}</span>}
 									</div>
-									<div class="mini-match-group">Grp {match.group}</div>
+									
+									<span class="match-vs">vs</span>
+									
+									<div class="team-with-owner">
+										{awayTeam && <span class={`owner-tag owner-${awayTeam.owner.toLowerCase()}`}>{awayTeam.owner.charAt(0)}</span>}
+										<span>{awayTeam?.name || match.awayTeamCode}</span>
+									</div>
 								</div>
-							)
-						})
-					)}
-				</div>
 
-				<!-- Right Column: Stats -->
-				    <div class="stats-sidebar">
-				        <div class="score-card">
-					    <h3>Total Points</h3>
-					    <div class="huge-score">{scoreData.totalPoints}</div>
-					    <div class="score-label">Across all 24 teams</div>
-				</div>
-					<div class="score-card">
-						<h3>Teams Remaining</h3>
-						<div class="huge-score">{myStats.totalTeams}</div>
-						<div class="score-label">Active in Tournament</div>
-					</div>
-				</div>
+								<div class="match-row-group">
+									{match.stage === 'group' ? `Grp ${match.group}` : match.stage.replace(/_/g, ' ')}
+								</div>
+							</div>
+						)
+					})
+				)}
 			</div>
 
-            <h2 class="my-teams-header">Points Breakdown</h2>
+			<h2 class="my-teams-header">Points Breakdown</h2>
 			<div class="points-table-wrapper" style="overflow-x: auto; margin-bottom: 3rem;">
 				<table style="width: 100%; border-collapse: collapse; text-align: left; background: white; border: 1px solid #e2e8f0; border-radius: 8px;">
 					<thead style="background: #f8fafc; border-bottom: 2px solid #e2e8f0;">
