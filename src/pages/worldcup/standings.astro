@@ -5,9 +5,9 @@ import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import { getGroupStandings, getThirdPlaceStandings } from '../../data/worldcup/standings';
 import type { Group } from '../../data/worldcup/teams';
+import { teams } from '../../data/worldcup/teams'; // <-- ADD THIS LINE
 
-const wildcardStandings = getThirdPlaceStandings(); // Fetch the wildcards
-
+const wildcardStandings = getThirdPlaceStandings();
 const groups: Group[] = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'];
 ---
 

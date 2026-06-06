@@ -12,6 +12,7 @@ export interface Team {
   tier: number;
   worldRank: number;
   tournamentRank: number;
+  status?: 'active' | 'eliminated';
 }
 
 export const teams: Team[] = [
